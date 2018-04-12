@@ -17,18 +17,27 @@ aws_access_key_id = REDACTED
 
 `git clone git@bitbucket.org:influentialchicken/kubernetes-automation.git`
 
-**4. create ssh-key**
+**4. download terraform binary **
+
+```
+wget https://releases.hashicorp.com/terraform/0.11.7/terraform_0.11.7_linux_amd64.zip
+unzip terraform_0.11.7_linux_amd64.zip 
+chmod +x terraform
+./terraform version
+```
+
+**5. create ssh-key**
 ```
 cd kubernetes-automation/ssh-keypairs
 ssh-keygen -f kubernetes_test_key -N ''
 ```
 
-**5. update terraform variables, if necessary**
+**6. update terraform variables, if necessary**
 
 `kubernetes-automation/terraform/variables.tf`
 
 
-**6. build infrastructure:**
+**7. build infrastructure:**
 
 ```
 cd kubernetes-automation/ansible
