@@ -2,14 +2,6 @@
 
 **QUICKSTART**
 
-1. This is a numbered list.
-2. I'm going to include a fenced code block as part of this bullet:
-
-    ```
-    Code
-    More Code
-    ```
-
 - install boto and configure aws credentials
 -- `sudo apt install python-pip && sudo pip install -U boto`
 -- populate AWS profile credentials here: `~/.aws/credentials` - example below:
