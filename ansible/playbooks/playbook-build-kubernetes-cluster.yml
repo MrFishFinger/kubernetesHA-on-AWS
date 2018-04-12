@@ -3,7 +3,7 @@
 
 - hosts: local_machine
   roles:
-    - { role: terraform-kubernetes1, project_path: '/home/jim/devel/git/kubernetes-automation/terraform/', binary_path: '/home/jim/devel/git/kubernetes-automation/terraform/terraform' }
+    - { role: terraform-kubernetes1, project_path: '{{playbook_dir}}/../../terraform/', binary_path: '{{playbook_dir}}/../../terraform/terraform' }
 
 
 - hosts: tag_Name_kube*
