@@ -1,0 +1,5 @@
+[local]
+local_machine           ansible_connection=local
+
+[local:vars]
+ansible_become=false

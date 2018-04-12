@@ -1,0 +1,29 @@
+- name: add kubernetes apt repository signing key
+  apt_key:
+    url: https://packages.cloud.google.com/apt/doc/apt-key.gpg
+    state: present
+
+
+- name: add kubernetes apt repository
+  apt_repository:
+    repo: deb http://apt.kubernetes.io/ kubernetes-xenial main
+    state: present
+
+
+- name: install kubernetes software
+  package:
+    name: "{{item}}"
+    state: present
+  with_items:
+    - kubelet
+    - kubeadm
+    - kubectl
+
+
+- name: enable kubelet service
+  service:
+    name: kubelet
+    enabled: yes
+    state: started
+    daemon_reload: yes
+  ignore_errors: yes

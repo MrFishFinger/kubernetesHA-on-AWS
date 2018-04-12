@@ -1,0 +1,9 @@
+- name: check if already in cluster
+  stat:
+    path: /etc/kubernetes/kubelet.conf
+  register: stat_in_cluster
+
+
+- name: join kubernetes cluster
+  command: "{{ hostvars[groups['tag_Name_kube_master1'][0]]['kube_cluster_join_command'] }}"
+  when: (stat_in_cluster.stat.exists == False)

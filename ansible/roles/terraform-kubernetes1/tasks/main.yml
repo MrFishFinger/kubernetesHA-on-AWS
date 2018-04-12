@@ -1,0 +1,22 @@
+- name: build terraform infrastructure on AWS
+  terraform:
+    binary_path: '{{binary_path}}'
+    project_path: '{{project_path}}'
+    state: present
+  register: terraform_output
+
+
+- name: Refresh EC2 cache
+  command: ../hosts/ec2.py --refresh-cache
+
+
+- name: Refresh in-memory EC2 cache
+  meta: refresh_inventory
+
+
+- debug:
+    msg:
+      - "kube-master1: {{terraform_output.outputs.kubemaster1_ip.value}}"
+      - "kube-master2: {{terraform_output.outputs.kubemaster2_ip.value}}"
+      - "kube-node1: {{terraform_output.outputs.kubenode1_ip.value}}"
+      - "kube-node2: {{terraform_output.outputs.kubenode1_ip.value}}"

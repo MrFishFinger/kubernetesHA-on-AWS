@@ -1,0 +1,42 @@
+- name: add docker apt repository signing key
+  apt_key:
+    url: https://download.docker.com/linux/ubuntu/gpg
+    state: present
+
+
+- name: add docker apt repository
+  apt_repository:
+    repo: deb https://download.docker.com/linux/debian stretch stable
+    state: present
+
+
+- name: install prerequisite-software
+  package:
+    name: "{{item}}"
+    state: present
+  with_items:
+    - apt-transport-https
+    - ca-certificates
+    - curl
+    - software-properties-common
+
+
+- name: install docker version {{version}}
+  package:
+    name: "docker-ce={{version}}"
+    state: present
+
+
+# - name: install docker python
+#   pip:
+#     name: docker
+#     state: latest
+
+
+- name: enable docker service
+  service:
+    name: docker
+    enabled: yes
+    state: started
+    daemon_reload: yes
+  ignore_errors: yes

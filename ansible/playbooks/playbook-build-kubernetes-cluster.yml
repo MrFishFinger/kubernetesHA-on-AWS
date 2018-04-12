@@ -1,0 +1,27 @@
+# usage:
+# AWS_PROFILE=rabbitman ansible-playbook playbooks/playbook-build-kubernetes-cluster.yml
+
+- hosts: local_machine
+  roles:
+    - { role: terraform-kubernetes1, project_path: '/home/jim/devel/git/kubernetes-automation/terraform/', binary_path: '/home/jim/devel/git/kubernetes-automation/terraform/terraform' }
+
+
+- hosts: tag_Name_kube*
+  roles:
+    - { role: docker, version: "17.03.2~ce-0~debian-stretch" }
+    - { role: kubernetes }
+
+
+- hosts: tag_Name_kube_master1
+  roles:
+    - { role: kubernetes-master, cluster_mode: 'create' }
+
+
+- hosts: tag_Name_kube_master2
+  roles:
+    - { role: kubernetes-master, cluster_mode: 'join' }
+
+
+- hosts: tag_Name_kube_node*
+  roles:
+    - { role: kubernetes-node }
