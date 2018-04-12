@@ -1,4 +1,5 @@
 terraform/terraform
 terraform/.terraform
-ssh-keypairs
+ssh-keypairs/*
+!ssh-keypairs/placeholder.txt
 *.retry
