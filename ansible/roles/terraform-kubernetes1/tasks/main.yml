@@ -6,6 +6,11 @@
   register: terraform_output
 
 
+- name: sleep to ensure AWS EC2 instances are settled
+  pause:
+    seconds: 10
+
+
 - name: Refresh EC2 cache
   command: "{{inventory_dir}}/ec2.py --refresh-cache"
 
