@@ -3,7 +3,7 @@ variable "aws_region" {
 }
 
 variable "aws_authprofile" {
-  default = "rabbitman"
+  default = "superman"
 }
 
 variable "aws_ami_debian94" {

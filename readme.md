@@ -8,7 +8,7 @@
 
 *example:*
 ```
-[rabbitman]
+[superman]
 aws_secret_access_key = REDACTED
 aws_access_key_id = REDACTED
 ```
@@ -43,5 +43,5 @@ chmod 0400 kubernetes_test_key*
 
 ```
 cd kubernetes-automation/ansible
-AWS_PROFILE=rabbitman ansible-playbook playbooks/playbook-build-kubernetes-cluster.yml
+AWS_PROFILE=superman ansible-playbook playbooks/playbook-build-kubernetes-cluster.yml
 ```

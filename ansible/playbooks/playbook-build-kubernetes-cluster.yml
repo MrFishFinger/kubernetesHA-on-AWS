@@ -1,5 +1,5 @@
 # usage:
-# AWS_PROFILE=rabbitman ansible-playbook playbooks/playbook-build-kubernetes-cluster.yml
+# AWS_PROFILE=superman ansible-playbook playbooks/playbook-build-kubernetes-cluster.yml
 
 - hosts: local_machine
   roles:
