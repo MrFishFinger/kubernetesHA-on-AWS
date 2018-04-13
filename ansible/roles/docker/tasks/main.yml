@@ -14,6 +14,7 @@
   package:
     name: "{{item}}"
     state: present
+    force: yes
   with_items:
     - apt-transport-https
     - ca-certificates
@@ -21,16 +22,19 @@
     - software-properties-common
 
 
+- name: add apt-hold pin to keep docker-ce at version {{version}}
+  copy:
+    dest: /etc/apt/preferences.d/docker-ce
+    content: |
+      Package: docker-ce
+      Pin: version {{ version }}
+      Pin-Priority: 1002
+
+
 - name: install docker version {{version}}
-  package:
+  apt:
     name: "docker-ce={{version}}"
     state: present
-
-
-# - name: install docker python
-#   pip:
-#     name: docker
-#     state: latest
 
 
 - name: enable docker service

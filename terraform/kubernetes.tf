@@ -55,12 +55,12 @@ resource "aws_instance" "kube-master1" {
     private_key  = "${file(var.ssh_private_key_path)}"
   }
 
-  provisioner "remote-exec" {
-    inline = [
-      "sleep 10",
-      "sudo apt update && sudo apt upgrade -y && sudo apt dist-upgrade -y"
-    ]
-  }
+  # provisioner "remote-exec" {
+  #   inline = [
+  #     "sleep 10",
+  #     "sudo apt update && sudo apt upgrade -y && sudo apt dist-upgrade -y"
+  #   ]
+  # }
 
   tags {
     Name = "kube-master1"
@@ -79,12 +79,12 @@ resource "aws_instance" "kube-master2" {
     private_key  = "${file(var.ssh_private_key_path)}"
   }
 
-  provisioner "remote-exec" {
-    inline = [
-      "sleep 10",
-      "sudo apt update && sudo apt upgrade -y && sudo apt dist-upgrade -y"
-    ]
-  }
+  # provisioner "remote-exec" {
+  #   inline = [
+  #     "sleep 10",
+  #     "sudo apt update && sudo apt upgrade -y && sudo apt dist-upgrade -y"
+  #   ]
+  # }
 
   tags {
     Name = "kube-master2"
@@ -104,12 +104,12 @@ resource "aws_instance" "kube-node1" {
     private_key  = "${file(var.ssh_private_key_path)}"
   }
 
-  provisioner "remote-exec" {
-    inline = [
-      "sleep 10",
-      "sudo apt update && sudo apt upgrade -y && sudo apt dist-upgrade -y"
-    ]
-  }
+  # provisioner "remote-exec" {
+  #   inline = [
+  #     "sleep 10",
+  #     "sudo apt update && sudo apt upgrade -y && sudo apt dist-upgrade -y"
+  #   ]
+  # }
 
   tags {
     Name = "kube-node1"
@@ -129,12 +129,12 @@ resource "aws_instance" "kube-node2" {
     private_key  = "${file(var.ssh_private_key_path)}"
   }
 
-  provisioner "remote-exec" {
-    inline = [
-      "sleep 10",
-      "sudo apt update && sudo apt upgrade -y && sudo apt dist-upgrade -y"
-    ]
-  }
+  # provisioner "remote-exec" {
+  #   inline = [
+  #     "sleep 10",
+  #     "sudo apt update && sudo apt upgrade -y && sudo apt dist-upgrade -y"
+  #   ]
+  # }
 
   tags {
     Name = "kube-node2"
