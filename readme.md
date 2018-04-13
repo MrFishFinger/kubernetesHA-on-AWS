@@ -30,6 +30,7 @@ chmod +x terraform
 ```
 cd kubernetes-automation/ssh-keypairs
 ssh-keygen -f kubernetes_test_key -N ''
+chmod 0400 kubernetes_test_key*
 ```
 
 **6. if necessary, update terraform/ec2 variables (such as region)**
