@@ -32,9 +32,10 @@ cd kubernetes-automation/ssh-keypairs
 ssh-keygen -f kubernetes_test_key -N ''
 ```
 
-**6. update terraform variables, if necessary**
+**6. if necessary, update terraform/ec2 variables (such as region)**
 
 `kubernetes-automation/terraform/variables.tf`
+`kubernetes-automation/ansible/hosts/ec2.ini`
 
 
 **7. build infrastructure:**
