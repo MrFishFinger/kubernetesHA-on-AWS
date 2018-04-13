@@ -4,6 +4,18 @@
   register: stat_in_cluster
 
 
+- name: configure kubelet systemd service to use aws cloud provider
+  lineinfile:
+    dest: /etc/systemd/system/kubelet.service.d/10-kubeadm.conf
+    regexp: "^Environment=\"KUBELET_EXTRA_ARGS"
+    line: "Environment=\"KUBELET_EXTRA_ARGS=--cloud-provider=aws\""
+    state: present
+    create: yes
+  notify:
+    - reload systemctl daemon
+    - restart kubelet
+
+
 - name: join kubernetes cluster
   command: "{{ hostvars[groups['tag_Name_kube_master1'][0]]['kube_cluster_join_command'] }}"
   when: (stat_in_cluster.stat.exists == False)

@@ -13,6 +13,7 @@
 
 - name: Refresh EC2 cache
   command: "{{inventory_dir}}/ec2.py --refresh-cache"
+  changed_when: false
 
 
 - name: Refresh in-memory EC2 cache

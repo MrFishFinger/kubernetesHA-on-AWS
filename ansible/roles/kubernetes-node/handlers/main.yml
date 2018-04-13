@@ -1,0 +1,8 @@
+- name: reload systemctl daemon
+  shell: systemctl daemon-reload
+
+
+- name: restart kubelet
+  service:
+    name: kubelet
+    state: restarted

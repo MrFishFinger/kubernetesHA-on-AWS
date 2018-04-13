@@ -1,3 +1,10 @@
+- name: copy kubeadm config file
+  copy:
+    src: kubeadm-config.yml
+    dest: /opt/kubeadm-config.yml
+  when: (cluster_mode == 'create')
+
+
 - name: check if a kubernetes master
   stat:
     path: /etc/kubernetes/manifests/kube-scheduler.yaml
@@ -11,7 +18,7 @@
 
 
 - name: create kubernetes cluster
-  shell: kubeadm init --pod-network-cidr=10.244.0.0/16
+  shell: kubeadm init --config /opt/kubeadm-config.yml
   when: (stat_master.stat.exists == False) and (stat_in_cluster.stat.exists == False) and (cluster_mode == 'create')
 
 

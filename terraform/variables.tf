@@ -6,6 +6,10 @@ variable "aws_authprofile" {
   default = "superman"
 }
 
+variable "aws_iam_role_for_kubernetes" {
+  default = "aaa_kubernetes_role"
+}
+
 variable "aws_ami_debian94" {
   default = "ami-ada0f946"
 }

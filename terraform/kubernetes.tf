@@ -48,6 +48,7 @@ resource "aws_instance" "kube-master1" {
   instance_type          = "t2.micro"
   key_name               = "${aws_key_pair.kubernetes_keypair1.id}"
   vpc_security_group_ids = ["${aws_security_group.kubernetes1.id}"]
+  iam_instance_profile   = "${var.aws_iam_role_for_kubernetes}"
 
   connection {
     type         = "ssh"
@@ -63,7 +64,8 @@ resource "aws_instance" "kube-master1" {
   # }
 
   tags {
-    Name = "kube-master1"
+    "Name" = "kube-master1"
+    "kubernetes.io/cluster/kubernetes" = "owned"
   }
 }
 
@@ -72,6 +74,7 @@ resource "aws_instance" "kube-master2" {
   instance_type          = "t2.micro"
   key_name               = "${aws_key_pair.kubernetes_keypair1.id}"
   vpc_security_group_ids = ["${aws_security_group.kubernetes1.id}"]
+  iam_instance_profile   = "${var.aws_iam_role_for_kubernetes}"
 
   connection {
     type         = "ssh"
@@ -87,7 +90,8 @@ resource "aws_instance" "kube-master2" {
   # }
 
   tags {
-    Name = "kube-master2"
+    "Name" = "kube-master2"
+    "kubernetes.io/cluster/kubernetes" = "owned"
   }
 }
 
@@ -97,6 +101,7 @@ resource "aws_instance" "kube-node1" {
   instance_type = "t2.micro"
   key_name      = "${aws_key_pair.kubernetes_keypair1.id}"
   vpc_security_group_ids = ["${aws_security_group.kubernetes1.id}"]
+  iam_instance_profile   = "${var.aws_iam_role_for_kubernetes}"
 
   connection {
     type         = "ssh"
@@ -112,7 +117,8 @@ resource "aws_instance" "kube-node1" {
   # }
 
   tags {
-    Name = "kube-node1"
+    "Name" = "kube-node1"
+    "kubernetes.io/cluster/kubernetes" = "owned"
   }
 }
 
@@ -122,6 +128,7 @@ resource "aws_instance" "kube-node2" {
   instance_type = "t2.micro"
   key_name      = "${aws_key_pair.kubernetes_keypair1.id}"
   vpc_security_group_ids = ["${aws_security_group.kubernetes1.id}"]
+  iam_instance_profile   = "${var.aws_iam_role_for_kubernetes}"
 
   connection {
     type         = "ssh"
@@ -137,7 +144,8 @@ resource "aws_instance" "kube-node2" {
   # }
 
   tags {
-    Name = "kube-node2"
+    "Name" = "kube-node2"
+    "kubernetes.io/cluster/kubernetes" = "owned"
   }
 }
 

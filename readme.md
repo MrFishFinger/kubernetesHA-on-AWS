@@ -1,5 +1,9 @@
 # QUICKSTART
 
+**0. ensure there is an IAM role configured in AWS**
+  create IAM role named `aaa_kubernetes_role` that has adequate ec2 permissions (eg `AmazonEC2FullAccess`)
+
+
 **1. install boto and configure aws credentials**
 
 `sudo apt install python-pip && sudo pip install -U boto`
