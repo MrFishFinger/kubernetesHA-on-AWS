@@ -7,16 +7,26 @@
 
 
 - name: Refresh EC2 cache
-  command: ../hosts/ec2.py --refresh-cache
+  command: "{{inventory_dir}}/ec2.py --refresh-cache"
 
 
 - name: Refresh in-memory EC2 cache
   meta: refresh_inventory
 
 
-- debug:
+- name: get IP addresses of instances via ec2.py script
+  debug:
     msg:
-      - "kube-master1: {{terraform_output.outputs.kubemaster1_ip.value}}"
-      - "kube-master2: {{terraform_output.outputs.kubemaster2_ip.value}}"
-      - "kube-node1: {{terraform_output.outputs.kubenode1_ip.value}}"
-      - "kube-node2: {{terraform_output.outputs.kubenode1_ip.value}}"
+      - "kube-master1: {{hostvars[groups['tag_Name_kube_master1'][0]]['ec2_ip_address']}}"
+      - "kube-master2: {{hostvars[groups['tag_Name_kube_master2'][0]]['ec2_ip_address']}}"
+      - "kube-node1: {{hostvars[groups['tag_Name_kube_node1'][0]]['ec2_ip_address']}}"
+      - "kube-node2: {{hostvars[groups['tag_Name_kube_node2'][0]]['ec2_ip_address']}}"
+
+
+# - name: get IP addresses of instances via output from terraform run step
+#   debug:
+#     msg:
+#       - "kube-master1: {{terraform_output.outputs.kubemaster1_ip.value}}"
+#       - "kube-master2: {{terraform_output.outputs.kubemaster2_ip.value}}"
+#       - "kube-node1: {{terraform_output.outputs.kubenode1_ip.value}}"
+#       - "kube-node2: {{terraform_output.outputs.kubenode2_ip.value}}"
