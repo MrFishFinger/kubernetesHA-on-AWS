@@ -36,3 +36,8 @@
 #       - "kube-master2: {{terraform_output.outputs.kubemaster2_ip.value}}"
 #       - "kube-node1: {{terraform_output.outputs.kubenode1_ip.value}}"
 #       - "kube-node2: {{terraform_output.outputs.kubenode2_ip.value}}"
+
+
+- name: set fact for ID of extra_ebs_volume1
+  set_fact:
+     extra_ebs_volume1_ID: "{{terraform_output.outputs.extra_ebs_volume1_ID.value}}"

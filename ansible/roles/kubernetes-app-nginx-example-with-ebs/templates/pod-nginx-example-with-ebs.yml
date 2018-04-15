@@ -1,0 +1,16 @@
+apiVersion: v1
+kind: Pod
+metadata:
+  name: nginx-example-with-ebs
+spec:
+  containers:
+  - image: nginx:stable-alpine
+    name: nginx-example-with-ebs
+    volumeMounts:
+    - mountPath: /ebs-volume
+      name: ebs-volume
+  volumes:
+  - name: ebs-volume
+    awsElasticBlockStore:
+      volumeID: {{ hostvars['local_machine']['extra_ebs_volume1_ID'] }}
+      fsType: ext4

@@ -27,3 +27,8 @@
 - hosts: tag_Name_kube_node*
   roles:
     - { role: kubernetes-node }
+
+
+- hosts: tag_Name_kube_master1
+  roles:
+   - { role: kubernetes-app-nginx-example-with-ebs }

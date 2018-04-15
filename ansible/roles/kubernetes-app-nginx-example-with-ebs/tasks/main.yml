@@ -1,0 +1,17 @@
+- name: create directory kubernetes-yaml-definitions
+  file:
+    path: /opt/kubernetes-yaml-definitions/
+    state: directory
+
+
+- name: copy definition file
+  template:
+    src: pod-nginx-example-with-ebs.yml
+    dest: /opt/kubernetes-yaml-definitions/
+
+
+# TODO: use something other than a command step here - maybe native kubernetes step?...
+- name: create kubernetes resource from definition file
+  command: kubectl create -f /opt/kubernetes-yaml-definitions/pod-nginx-example-with-ebs.yml
+  environment:
+    KUBECONFIG: /etc/kubernetes/admin.conf

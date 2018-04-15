@@ -126,6 +126,17 @@ resource "aws_instance" "kube-node2" {
 }
 
 
+resource "aws_ebs_volume" "extra_ebs_volume1" {
+  availability_zone      = "${var.aws_AZ}"
+  size                   = 10
+  tags {
+    name = "extra_ebs_volume1"
+  }
+}
+
+
+
+
 
 
 output "kubemaster1_ip" {
@@ -142,4 +153,10 @@ output "kubenode1_ip" {
 
 output "kubenode2_ip" {
   value = "${aws_instance.kube-node2.public_ip}"
+}
+
+
+
+output "extra_ebs_volume1_ID" {
+  value = "${aws_ebs_volume.extra_ebs_volume1.id}"
 }
