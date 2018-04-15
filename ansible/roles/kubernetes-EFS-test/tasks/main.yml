@@ -49,4 +49,4 @@
   command: kubectl create -f /opt/kubernetes-yaml-definitions/pvc-efs-fs1.yml
   environment:
     KUBECONFIG: /etc/kubernetes/admin.conf
-  when: '"pvc-efs-fs1" not in pvc_list.stdout'
+  when: '"pv-efs-fs1" not in pvc_list.stdout'
