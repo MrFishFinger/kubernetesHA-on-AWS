@@ -56,13 +56,6 @@ resource "aws_instance" "kube-master1" {
     private_key  = "${file(var.ssh_private_key_path)}"
   }
 
-  # provisioner "remote-exec" {
-  #   inline = [
-  #     "sleep 10",
-  #     "sudo apt update && sudo apt upgrade -y && sudo apt dist-upgrade -y"
-  #   ]
-  # }
-
   tags {
     "Name" = "kube-master1"
     "kubernetes.io/cluster/kubernetes" = "owned"
@@ -77,12 +70,6 @@ resource "aws_instance" "kube-master1" {
 #   vpc_security_group_ids = ["${aws_security_group.kubernetes1.id}"]
 #   iam_instance_profile   = "${var.aws_iam_role_for_kubernetes}"
 
-  # provisioner "remote-exec" {
-  #   inline = [
-  #     "sleep 10",
-  #     "sudo apt update && sudo apt upgrade -y && sudo apt dist-upgrade -y"
-  #   ]
-  # }
 #   connection {
 #     type         = "ssh"
 #     user         = "admin"
@@ -109,13 +96,6 @@ resource "aws_instance" "kube-node1" {
     private_key  = "${file(var.ssh_private_key_path)}"
   }
 
-  # provisioner "remote-exec" {
-  #   inline = [
-  #     "sleep 10",
-  #     "sudo apt update && sudo apt upgrade -y && sudo apt dist-upgrade -y"
-  #   ]
-  # }
-
   tags {
     "Name" = "kube-node1"
     "kubernetes.io/cluster/kubernetes" = "owned"
@@ -135,13 +115,6 @@ resource "aws_instance" "kube-node2" {
     user         = "admin"
     private_key  = "${file(var.ssh_private_key_path)}"
   }
-
-  # provisioner "remote-exec" {
-  #   inline = [
-  #     "sleep 10",
-  #     "sudo apt update && sudo apt upgrade -y && sudo apt dist-upgrade -y"
-  #   ]
-  # }
 
   tags {
     "Name" = "kube-node2"
