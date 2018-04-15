@@ -2,6 +2,10 @@ variable "aws_region" {
   default = "eu-central-1"
 }
 
+variable "aws_AZ" {
+  default = "eu-central-1a"
+}
+
 variable "aws_authprofile" {
   default = "superman"
 }

@@ -46,6 +46,7 @@ resource "aws_security_group" "kubernetes1" {
 resource "aws_instance" "kube-master1" {
   ami                    = "${var.aws_ami_debian94}"
   instance_type          = "t2.micro"
+  availability_zone      = "${var.aws_AZ}"
   key_name               = "${aws_key_pair.kubernetes_keypair1.id}"
   vpc_security_group_ids = ["${aws_security_group.kubernetes1.id}"]
   iam_instance_profile   = "${var.aws_iam_role_for_kubernetes}"
@@ -84,9 +85,10 @@ resource "aws_instance" "kube-master1" {
 
 
 resource "aws_instance" "kube-node1" {
-  ami           = "${var.aws_ami_debian94}"
-  instance_type = "t2.micro"
-  key_name      = "${aws_key_pair.kubernetes_keypair1.id}"
+  ami                    = "${var.aws_ami_debian94}"
+  instance_type          = "t2.micro"
+  availability_zone      = "${var.aws_AZ}"
+  key_name               = "${aws_key_pair.kubernetes_keypair1.id}"
   vpc_security_group_ids = ["${aws_security_group.kubernetes1.id}"]
   iam_instance_profile   = "${var.aws_iam_role_for_kubernetes}"
 
@@ -104,9 +106,10 @@ resource "aws_instance" "kube-node1" {
 
 
 resource "aws_instance" "kube-node2" {
-  ami           = "${var.aws_ami_debian94}"
-  instance_type = "t2.micro"
-  key_name      = "${aws_key_pair.kubernetes_keypair1.id}"
+  ami                    = "${var.aws_ami_debian94}"
+  instance_type          = "t2.micro"
+  availability_zone      = "${var.aws_AZ}"
+  key_name               = "${aws_key_pair.kubernetes_keypair1.id}"
   vpc_security_group_ids = ["${aws_security_group.kubernetes1.id}"]
   iam_instance_profile   = "${var.aws_iam_role_for_kubernetes}"
 
