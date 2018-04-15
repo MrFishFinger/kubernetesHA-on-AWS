@@ -69,18 +69,13 @@ resource "aws_instance" "kube-master1" {
   }
 }
 
-resource "aws_instance" "kube-master2" {
-  ami                    = "${var.aws_ami_debian94}"
-  instance_type          = "t2.micro"
-  key_name               = "${aws_key_pair.kubernetes_keypair1.id}"
-  vpc_security_group_ids = ["${aws_security_group.kubernetes1.id}"]
-  iam_instance_profile   = "${var.aws_iam_role_for_kubernetes}"
-
-  connection {
-    type         = "ssh"
-    user         = "admin"
-    private_key  = "${file(var.ssh_private_key_path)}"
-  }
+# resource "aws_instance" "kube-master2" {
+#   ami                    = "${var.aws_ami_debian94}"
+#   instance_type          = "t2.micro"
+#   availability_zone      = "${var.aws_AZ}"
+#   key_name               = "${aws_key_pair.kubernetes_keypair1.id}"
+#   vpc_security_group_ids = ["${aws_security_group.kubernetes1.id}"]
+#   iam_instance_profile   = "${var.aws_iam_role_for_kubernetes}"
 
   # provisioner "remote-exec" {
   #   inline = [
@@ -88,12 +83,17 @@ resource "aws_instance" "kube-master2" {
   #     "sudo apt update && sudo apt upgrade -y && sudo apt dist-upgrade -y"
   #   ]
   # }
+#   connection {
+#     type         = "ssh"
+#     user         = "admin"
+#     private_key  = "${file(var.ssh_private_key_path)}"
+#   }
 
-  tags {
-    "Name" = "kube-master2"
-    "kubernetes.io/cluster/kubernetes" = "owned"
-  }
-}
+#   tags {
+#     "Name" = "kube-master2"
+#     "kubernetes.io/cluster/kubernetes" = "owned"
+#   }
+# }
 
 
 resource "aws_instance" "kube-node1" {
@@ -156,9 +156,9 @@ output "kubemaster1_ip" {
   value = "${aws_instance.kube-master1.public_ip}"
 }
 
-output "kubemaster2_ip" {
-  value = "${aws_instance.kube-master2.public_ip}"
-}
+# output "kubemaster2_ip" {
+#   value = "${aws_instance.kube-master2.public_ip}"
+# }
 
 output "kubenode1_ip" {
   value = "${aws_instance.kube-node1.public_ip}"

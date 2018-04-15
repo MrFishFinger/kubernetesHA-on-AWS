@@ -19,9 +19,9 @@
     - { role: kubernetes-master, cluster_mode: 'create' }
 
 
-- hosts: tag_Name_kube_master2
-  roles:
-    - { role: kubernetes-master, cluster_mode: 'join' }
+# - hosts: tag_Name_kube_master2
+#   roles:
+#     - { role: kubernetes-master, cluster_mode: 'join' }
 
 
 - hosts: tag_Name_kube_node*
