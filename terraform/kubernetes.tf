@@ -120,7 +120,7 @@ resource "aws_instance" "kube-node2" {
   }
 
   tags {
-    "Name" = "kube-node2"
+    "Name"  = "kube-node2"
     "kubernetes.io/cluster/kubernetes" = "owned"
   }
 }
@@ -130,11 +130,17 @@ resource "aws_ebs_volume" "extra_ebs_volume1" {
   availability_zone      = "${var.aws_AZ}"
   size                   = 10
   tags {
-    name = "extra_ebs_volume1"
+    name                 = "extra_ebs_volume1"
   }
 }
 
 
+resource "aws_efs_file_system" "efs_fs1" {
+  creation_token         = "efs_fs1"
+  tags {
+    name                 = "efs_fs1"
+  }
+}
 
 
 
@@ -159,4 +165,9 @@ output "kubenode2_ip" {
 
 output "extra_ebs_volume1_ID" {
   value = "${aws_ebs_volume.extra_ebs_volume1.id}"
+}
+
+
+output "efs_fs1_dnsname" {
+  value = "${aws_efs_file_system.efs_fs1.dns_name}"
 }

@@ -10,8 +10,16 @@
     dest: /opt/kubernetes-yaml-definitions/
 
 
+- name: check pod list to check if pod already running
+  command: kubectl get pods
+  register: pod_list
+  environment:
+    KUBECONFIG: /etc/kubernetes/admin.conf
+
+
 # TODO: use something other than a command step here - maybe native kubernetes step?...
 - name: create kubernetes resource from definition file
   command: kubectl create -f /opt/kubernetes-yaml-definitions/pod-nginx-example-with-ebs.yml
   environment:
     KUBECONFIG: /etc/kubernetes/admin.conf
+  when: '"nginx-example-with-ebs" not in pod_list.stdout'
