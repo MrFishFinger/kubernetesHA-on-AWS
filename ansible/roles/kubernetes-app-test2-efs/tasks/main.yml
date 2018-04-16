@@ -1,0 +1,72 @@
+- name: create pv-efs-fs1 PersistentVolume
+  k8s_raw:
+    state: present
+    kubeconfig: /etc/kubernetes/admin.conf
+    definition:
+      kind: PersistentVolume
+      apiVersion: v1
+      metadata:
+        name: pv-efs-fs1
+      spec:
+        capacity:
+          storage: 10Gi
+        accessModes:
+          - ReadWriteMany
+        nfs:
+          server: "{{ hostvars['local_machine']['test2_efs_fs_dnsname'] }}"
+          path: "/"
+
+
+- name: create pv-efs-fs1 PersistentVolumeClaim
+  k8s_raw:
+    state: present
+    kubeconfig: /etc/kubernetes/admin.conf
+    definition:
+      kind: PersistentVolumeClaim
+      apiVersion: v1
+      metadata:
+        namespace: default
+        name: pv-efs-fs1
+      spec:
+        accessModes:
+          - ReadWriteMany
+        resources:
+          requests:
+            storage: 10Gi
+
+
+- name: create test2-efs ReplicationController
+  k8s_raw:
+    state: present
+    kubeconfig: /etc/kubernetes/admin.conf
+    definition:
+      kind: ReplicationController
+      apiVersion: v1
+      metadata:
+        namespace: default
+        name: test2-efs
+        labels:
+          name: test2-efs
+      spec:
+        replicas: 1
+        selector:
+          name: test2-efs
+        template:
+          metadata:
+            labels:
+              name: test2-efs
+          spec:
+            containers:
+            - name: www-app
+              image: nginx:stable-alpine
+              imagePullPolicy: Always
+              ports:
+              - containerPort: 80
+              volumeMounts:
+              - mountPath: "/usr/share/nginx/html"
+                name: webroot
+            volumes:
+            - name: webroot
+              persistentVolumeClaim:
+                claimName: pv-efs-fs1
+

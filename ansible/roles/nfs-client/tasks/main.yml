@@ -1,0 +1,4 @@
+- name: install nfs-common
+  apt:
+    name: nfs-common
+    update_cache: yes

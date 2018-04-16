@@ -6,6 +6,14 @@ variable "aws_AZ" {
   default = "eu-central-1a"
 }
 
+variable "aws_VPC_ID" {
+  default = "vpc-c56c9bad"
+}
+
+variable "aws_subnet_CIDR" {
+  default = "172.31.101.0/24"
+}
+
 variable "aws_authprofile" {
   default = "superman"
 }
