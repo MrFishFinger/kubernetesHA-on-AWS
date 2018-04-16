@@ -32,5 +32,5 @@
 
 - hosts: tag_Name_kube_master1
   roles:
-   - { role: kubernetes-app-nginx-example-with-ebs }
-   - { role: kubernetes-EFS-test }
+   - { role: kubernetes-app-test1-ebs }
+   - { role: kubernetes-app-test2-efs }

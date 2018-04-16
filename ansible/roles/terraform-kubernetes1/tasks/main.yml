@@ -38,13 +38,11 @@
 #       - "kube-node2: {{terraform_output.outputs.kubenode2_ip.value}}"
 
 
-- name: set fact for ID of extra_ebs_volume1 ({{terraform_output.outputs.extra_ebs_volume1_ID.value}})
+- name: set fact for ID of test1-ebs ({{terraform_output.outputs.test1_ebs_volume_id.value}})
   set_fact:
-     extra_ebs_volume1_ID: "{{terraform_output.outputs.extra_ebs_volume1_ID.value}}"
+     test1_ebs_volume_id: "{{terraform_output.outputs.test1_ebs_volume_id.value}}"
 
 
-- name: set fact for DNSname of efs_fs1 ({{terraform_output.outputs.efs_fs1_dnsname.value}})
+- name: set fact for DNSname of test2-efs-fs1 ({{terraform_output.outputs.test2_efs_fs_dnsname.value}})
   set_fact:
-     efs_fs1_dnsname: "{{terraform_output.outputs.efs_fs1_dnsname.value}}"
-
-
+     test2_efs_fs_dnsname: "{{terraform_output.outputs.test2_efs_fs_dnsname.value}}"

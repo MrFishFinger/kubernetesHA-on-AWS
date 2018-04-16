@@ -1,6 +1,6 @@
 provider "aws" {
-  region                  = "${var.aws_region}"
-  profile                 = "${var.aws_authprofile}"
+  region  = "${var.aws_region}"
+  profile = "${var.aws_authprofile}"
 }
 
 
@@ -10,7 +10,6 @@ resource "aws_key_pair" "kubernetes_keypair1" {
 }
 
 
-resource "aws_security_group" "kubernetes1" {
 resource "aws_subnet" "kubernetes_subnet" {
   vpc_id                  = "${var.aws_VPC_ID}"
   cidr_block              = "${var.aws_subnet_CIDR}"
@@ -22,34 +21,35 @@ resource "aws_subnet" "kubernetes_subnet" {
 }
 
 
+resource "aws_security_group" "kubernetes_security_group" {
   name = "kubernetes1"
 
   ingress {
-    from_port    = 22
-    to_port      = 22
-    protocol     = "tcp"
-    cidr_blocks  = ["0.0.0.0/0"]
+    from_port   = 22
+    to_port     = 22
+    protocol    = "tcp"
+    cidr_blocks = ["0.0.0.0/0"]
   }
 
   ingress {
-    from_port       = 0
-    to_port         = 0
-    protocol        = "-1"
-    self            = true
+    from_port   = 0
+    to_port     = 0
+    protocol    = "-1"
+    self        = true
   }
 
   ingress {
-    from_port    = -1
-    to_port      = -1
-    protocol     = "icmp"
-    cidr_blocks  = ["0.0.0.0/0"]
+    from_port   = -1
+    to_port     = -1
+    protocol    = "icmp"
+    cidr_blocks = ["0.0.0.0/0"]
   }
 
   egress {
-    from_port    = 0
-    to_port      = 0
-    protocol     = "-1"
-    cidr_blocks  = ["0.0.0.0/0"]
+    from_port   = 0
+    to_port     = 0
+    protocol    = "-1"
+    cidr_blocks = ["0.0.0.0/0"]
   }
 }
 
@@ -60,17 +60,17 @@ resource "aws_instance" "kube-master1" {
   availability_zone      = "${var.aws_AZ}"
   subnet_id              = "${aws_subnet.kubernetes_subnet.id}"
   key_name               = "${aws_key_pair.kubernetes_keypair1.id}"
-  vpc_security_group_ids = ["${aws_security_group.kubernetes1.id}"]
+  vpc_security_group_ids = ["${aws_security_group.kubernetes_security_group.id}"]
   iam_instance_profile   = "${var.aws_iam_role_for_kubernetes}"
 
   connection {
-    type         = "ssh"
-    user         = "admin"
-    private_key  = "${file(var.ssh_private_key_path)}"
+    type        = "ssh"
+    user        = "admin"
+    private_key = "${file(var.ssh_private_key_path)}"
   }
 
   tags {
-    "Name" = "kube-master1"
+    "Name"                             = "kube-master1"
     "kubernetes.io/cluster/kubernetes" = "owned"
   }
 }
@@ -81,7 +81,7 @@ resource "aws_instance" "kube-master1" {
 #   availability_zone      = "${var.aws_AZ}"
 #   subnet_id              = "${aws_subnet.kubernetes_subnet.id}"
 #   key_name               = "${aws_key_pair.kubernetes_keypair1.id}"
-#   vpc_security_group_ids = ["${aws_security_group.kubernetes1.id}"]
+#   vpc_security_group_ids = ["${aws_security_group.kubernetes_security_group.id}"]
 #   iam_instance_profile   = "${var.aws_iam_role_for_kubernetes}"
 
 #   connection {
@@ -91,7 +91,7 @@ resource "aws_instance" "kube-master1" {
 #   }
 
 #   tags {
-#     "Name" = "kube-master2"
+#     "Name"                             = "kube-master2"
 #     "kubernetes.io/cluster/kubernetes" = "owned"
 #   }
 # }
@@ -103,13 +103,13 @@ resource "aws_instance" "kube-node1" {
   availability_zone      = "${var.aws_AZ}"
   subnet_id              = "${aws_subnet.kubernetes_subnet.id}"
   key_name               = "${aws_key_pair.kubernetes_keypair1.id}"
-  vpc_security_group_ids = ["${aws_security_group.kubernetes1.id}"]
+  vpc_security_group_ids = ["${aws_security_group.kubernetes_security_group.id}"]
   iam_instance_profile   = "${var.aws_iam_role_for_kubernetes}"
 
   connection {
-    type         = "ssh"
-    user         = "admin"
-    private_key  = "${file(var.ssh_private_key_path)}"
+    type        = "ssh"
+    user        = "admin"
+    private_key = "${file(var.ssh_private_key_path)}"
   }
 
   tags {
@@ -125,27 +125,27 @@ resource "aws_instance" "kube-node2" {
   availability_zone      = "${var.aws_AZ}"
   subnet_id              = "${aws_subnet.kubernetes_subnet.id}"
   key_name               = "${aws_key_pair.kubernetes_keypair1.id}"
-  vpc_security_group_ids = ["${aws_security_group.kubernetes1.id}"]
+  vpc_security_group_ids = ["${aws_security_group.kubernetes_security_group.id}"]
   iam_instance_profile   = "${var.aws_iam_role_for_kubernetes}"
 
   connection {
-    type         = "ssh"
-    user         = "admin"
-    private_key  = "${file(var.ssh_private_key_path)}"
+    type        = "ssh"
+    user        = "admin"
+    private_key = "${file(var.ssh_private_key_path)}"
   }
 
   tags {
-    "Name"  = "kube-node2"
+    "Name"                             = "kube-node2"
     "kubernetes.io/cluster/kubernetes" = "owned"
   }
 }
 
 
-resource "aws_ebs_volume" "extra_ebs_volume1" {
-  availability_zone      = "${var.aws_AZ}"
-  size                   = 10
+resource "aws_ebs_volume" "test1-ebs-volume1" {
+  availability_zone = "${var.aws_AZ}"
+  size              = 10
   tags {
-    name                 = "extra_ebs_volume1"
+    name = "test1-ebs-volume1"
   }
 }
 
@@ -184,8 +184,8 @@ output "kubenode2_ip" {
 
 
 
-output "extra_ebs_volume1_ID" {
-  value = "${aws_ebs_volume.extra_ebs_volume1.id}"
+output "test1_ebs_volume_id" {
+  value = "${aws_ebs_volume.test1-ebs-volume1.id}"
 }
 
 

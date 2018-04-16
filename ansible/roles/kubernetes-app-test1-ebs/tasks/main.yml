@@ -1,0 +1,22 @@
+- name: create test1-ebs pod
+  k8s_raw:
+    state: present
+    kubeconfig: /etc/kubernetes/admin.conf
+    definition:
+      apiVersion: v1
+      kind: Pod
+      metadata:
+        name: test1-ebs
+        namespace: default
+      spec:
+        containers:
+        - image: nginx:stable-alpine
+          name: test1-ebs
+          volumeMounts:
+          - mountPath: /ebs-volume
+            name: ebs-volume
+        volumes:
+        - name: ebs-volume
+          awsElasticBlockStore:
+            volumeID: "{{ hostvars['local_machine']['test1_ebs_volume_id'] }}"
+            fsType: ext4
