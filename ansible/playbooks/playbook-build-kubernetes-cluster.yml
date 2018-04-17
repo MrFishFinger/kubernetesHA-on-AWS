@@ -1,11 +1,16 @@
 # usage:
 # AWS_PROFILE=superman ansible-playbook playbooks/playbook-build-kubernetes-cluster.yml
 
+
+
+# TERRAFORM
 - hosts: local_machine
   roles:
     - { role: terraform-kubernetes1, project_path: '{{playbook_dir}}/../../terraform/', binary_path: '{{playbook_dir}}/../../terraform/terraform' }
 
 
+
+# GENERAL COMMON OS
 - hosts: tag_Name_kube*
   roles:
     - { role: aws-FQDN-hostname }
@@ -15,24 +20,44 @@
     - { role: kubernetes }
 
 
+# LEGACY NON-HA KUBERNETES MASTER
+# # - hosts: tag_Name_kube_master0
+# #   roles:
+# #     - { role: kubernetes-master }
+
+
+
+# KUBERNETES ETCD
 - hosts: tag_Name_kube_master0
   roles:
-    # - { role: kubernetes-master-HA, etcd_version: 'v3.1.10', cluster_mode: 'primary-master' }
-    - { role: kubernetes-master }
+    - { role: kubernetes-master-HA-etcd, etcd_version: 'v3.1.12', cluster_mode: 'primary-master' }
+
+- hosts: tag_Name_kube_master1 tag_Name_kube_master2
+  roles:
+    - { role: kubernetes-master-HA-etcd, etcd_version: 'v3.1.12', cluster_mode: 'secondary-master' }
 
 
-# - hosts: tag_Name_kube_master1 tag_Name_kube_master2
-#   roles:
-#     - { role: kubernetes-master-HA, etcd_version: 'v3.1.10', cluster_mode: 'secondary-master' }
+
+# KUBERNETES MASTERS
+- hosts: tag_Name_kube_master0
+  roles:
+    - { role: kubernetes-master-HA, cluster_mode: primary-master }
+
+- hosts: tag_Name_kube_master1 tag_Name_kube_master2
+  roles:
+    - { role: kubernetes-master-HA, cluster_mode: secondary-master }
 
 
+
+# KUBERNETES NODES
 - hosts: tag_Name_kube_node*
   roles:
     - { role: kubernetes-node }
 
 
+
+# KUBERNETES TEST APPLICATIONS
 - hosts: tag_Name_kube_master0
   roles:
    - { role: kubernetes-app-test1-ebs }
    - { role: kubernetes-app-test2-efs }
-
