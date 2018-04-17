@@ -3,5 +3,7 @@ terraform/.terraform
 ssh-keypairs/*
 !ssh-keypairs/placeholder.txt
 *.retry
+ansible/roles/kubernetes-master-HA-etcd/files/certs-fetched-from-primary-master/*
+!ansible/roles/kubernetes-master-HA-etcd/files/certs-fetched-from-primary-master/placeholder.txt
 ansible/roles/kubernetes-master-HA/files/certs-fetched-from-primary-master/*
 !ansible/roles/kubernetes-master-HA/files/certs-fetched-from-primary-master/placeholder.txt

@@ -1,0 +1,12 @@
+- name: configure etcd certs for primary-master
+  include_tasks: etcd-certs-primary-master.yml
+  when: (cluster_mode == 'primary-master')
+
+
+- name: configure etcd certs for secondary-master
+  include_tasks: etcd-certs-secondary-master.yml
+  when: (cluster_mode == 'secondary-master')
+
+
+- name: configure etcd
+  include_tasks: etcd-common.yml

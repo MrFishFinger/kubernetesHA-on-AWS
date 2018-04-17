@@ -1,23 +1,71 @@
-# - name: load VAULT-encrypted values
-#   include_vars:
-#     file: files/VAULT_encrypted_variables
-
-# based on https://kubernetes.io/docs/setup/independent/high-availability/
-# https://github.com/kubernetes/kubeadm/issues/709
-# https://github.com/kubernetes/kubeadm/issues/546
-# https://docs.google.com/document/d/1rEMFuHo3rBJfFapKBInjCqm2d7xGkXzh0FpFO0cRuqg/edit?ts=5a4aa6ba#heading=h.nvrl2cjdo72m
+- name: copy kubeadm config file
+  template:
+    src: kubeadm-config.yml
+    dest: /etc/kubernetes/kubeadm-config.yml
 
 
-- name: configure etcd certs for primary-master
-  include_tasks: etcd-certs-primary-master.yml
-  when: (cluster_mode == 'primary-master')
+- name: check if a kubernetes master
+  stat:
+    path: /etc/kubernetes/manifests/kube-scheduler.yaml
+  register: stat_master
 
 
-- name: configure etcd certs for secondary-master
-  include_tasks: etcd-certs-secondary-master.yml
+- name: check if in kubernetes cluster
+  stat:
+    path: /etc/kubernetes/kubelet.conf
+  register: stat_in_cluster
+
+
+- name: copy cert files that were generated on primary-master
+  copy:
+    src: "certs-fetched-from-primary-master/{{ item }}"
+    dest: "/etc/kubernetes/pki/{{ item }}"
+  with_items:
+    - ca.crt
+    - ca.key
+    - sa.key
+    - sa.pub
   when: (cluster_mode == 'secondary-master')
 
 
-- name: configure etcd
-  include_tasks: etcd-common.yml
+- name: create kubernetes cluster
+  shell: kubeadm init --config /etc/kubernetes/kubeadm-config.yml
+  when: (stat_master.stat.exists == False) and (stat_in_cluster.stat.exists == False)
+
+
+- name: fetch generated certs files from primary, to store on local machine, to then use for provisioning secondary masters
+  fetch:
+    src: "/etc/kubernetes/pki/{{item}}"
+    dest: "{{role_path}}/files/certs-fetched-from-primary-master/"
+    flat: yes
+  with_items:
+    - ca.crt
+    - ca.key
+    - sa.key
+    - sa.pub
+  when: (cluster_mode == 'primary-master')
+
+
+- name: add KUBECONFIG environment variable to root user bashrc
+  lineinfile:
+    dest: /root/.bashrc
+    regexp: "^export KUBECONFIG="
+    line: "export KUBECONFIG=/etc/kubernetes/admin.conf"
+    state: present
+    create: yes
+
+
+- name: enable flannel CDR networking
+  shell: export KUBECONFIG=/etc/kubernetes/admin.conf && kubectl apply -f https://raw.githubusercontent.com/coreos/flannel/v0.9.1/Documentation/kube-flannel.yml
+  when: (stat_master.stat.exists == False) and (stat_in_cluster.stat.exists == False)
+
+
+# FIXME: this generates a new join token every run - need to find a way to run only on demand...
+- name: generate cluster join token
+  command: "kubeadm token create --print-join-command"
+  register: join_command
+
+- name: store join_command in ansible fact so it can be used by nodes to join cluster
+  set_fact:
+    kube_cluster_join_command: "{{join_command.stdout}}"
 
