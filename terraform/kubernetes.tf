@@ -322,6 +322,6 @@ output "test2_efs_fs_dnsname" {
 
 
 output "kubernetesAPI_internal_LB1_dnsname" {
-  value = "${aws_lb.kubernetesAPI-internal-lb1.dns_name}"
-  # value = "${aws_elb.kubernetesAPI-internal-lb1.dns_name}"
+  # value = "${aws_lb.kubernetesAPI-internal-lb1.dns_name}"
+  value = "${aws_elb.kubernetesAPI-internal-lb1.dns_name}"
 }
