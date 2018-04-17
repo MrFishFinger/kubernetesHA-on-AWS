@@ -10,7 +10,7 @@
     state: present
 
 
-- name: install kubernetes software
+- name: install packages
   package:
     name: "{{item}}"
     state: present
@@ -18,6 +18,12 @@
     - kubelet
     - kubeadm
     - kubectl
+    - python-pip
+
+
+- name: install python openshift (required by ansible k8s_raw plugin)
+  pip:
+    name: openshift
 
 
 - name: enable kubelet service

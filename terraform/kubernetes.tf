@@ -54,6 +54,28 @@ resource "aws_security_group" "kubernetes_security_group" {
 }
 
 
+resource "aws_instance" "kube-master0" {
+  ami                    = "${var.aws_ami_debian94}"
+  instance_type          = "t2.micro"
+  availability_zone      = "${var.aws_AZ}"
+  subnet_id              = "${aws_subnet.kubernetes_subnet.id}"
+  key_name               = "${aws_key_pair.kubernetes_keypair1.id}"
+  vpc_security_group_ids = ["${aws_security_group.kubernetes_security_group.id}"]
+  iam_instance_profile   = "${var.aws_iam_role_for_kubernetes}"
+
+  connection {
+    type        = "ssh"
+    user        = "admin"
+    private_key = "${file(var.ssh_private_key_path)}"
+  }
+
+  tags {
+    "Name"                             = "kube-master0"
+    "kubernetes.io/cluster/kubernetes" = "owned"
+  }
+}
+
+
 resource "aws_instance" "kube-master1" {
   ami                    = "${var.aws_ami_debian94}"
   instance_type          = "t2.micro"
@@ -75,26 +97,49 @@ resource "aws_instance" "kube-master1" {
   }
 }
 
-# resource "aws_instance" "kube-master2" {
-#   ami                    = "${var.aws_ami_debian94}"
-#   instance_type          = "t2.micro"
-#   availability_zone      = "${var.aws_AZ}"
-#   subnet_id              = "${aws_subnet.kubernetes_subnet.id}"
-#   key_name               = "${aws_key_pair.kubernetes_keypair1.id}"
-#   vpc_security_group_ids = ["${aws_security_group.kubernetes_security_group.id}"]
-#   iam_instance_profile   = "${var.aws_iam_role_for_kubernetes}"
 
-#   connection {
-#     type         = "ssh"
-#     user         = "admin"
-#     private_key  = "${file(var.ssh_private_key_path)}"
-#   }
+resource "aws_instance" "kube-master2" {
+  ami                    = "${var.aws_ami_debian94}"
+  instance_type          = "t2.micro"
+  availability_zone      = "${var.aws_AZ}"
+  subnet_id              = "${aws_subnet.kubernetes_subnet.id}"
+  key_name               = "${aws_key_pair.kubernetes_keypair1.id}"
+  vpc_security_group_ids = ["${aws_security_group.kubernetes_security_group.id}"]
+  iam_instance_profile   = "${var.aws_iam_role_for_kubernetes}"
 
-#   tags {
-#     "Name"                             = "kube-master2"
-#     "kubernetes.io/cluster/kubernetes" = "owned"
-#   }
-# }
+  connection {
+    type         = "ssh"
+    user         = "admin"
+    private_key  = "${file(var.ssh_private_key_path)}"
+  }
+
+  tags {
+    "Name"                             = "kube-master2"
+    "kubernetes.io/cluster/kubernetes" = "owned"
+  }
+}
+
+
+resource "aws_instance" "kube-node0" {
+  ami                    = "${var.aws_ami_debian94}"
+  instance_type          = "t2.micro"
+  availability_zone      = "${var.aws_AZ}"
+  subnet_id              = "${aws_subnet.kubernetes_subnet.id}"
+  key_name               = "${aws_key_pair.kubernetes_keypair1.id}"
+  vpc_security_group_ids = ["${aws_security_group.kubernetes_security_group.id}"]
+  iam_instance_profile   = "${var.aws_iam_role_for_kubernetes}"
+
+  connection {
+    type        = "ssh"
+    user        = "admin"
+    private_key = "${file(var.ssh_private_key_path)}"
+  }
+
+  tags {
+    "Name"                             = "kube-node0"
+    "kubernetes.io/cluster/kubernetes" = "owned"
+  }
+}
 
 
 resource "aws_instance" "kube-node1" {
@@ -113,7 +158,7 @@ resource "aws_instance" "kube-node1" {
   }
 
   tags {
-    "Name" = "kube-node1"
+    "Name"                             = "kube-node1"
     "kubernetes.io/cluster/kubernetes" = "owned"
   }
 }
@@ -165,14 +210,21 @@ resource "aws_efs_mount_target" "test2-efs-fs1-mount-target" {
 }
 
 
+output "kubemaster0_ip" {
+  value = "${aws_instance.kube-master0.public_ip}"
+}
 
 output "kubemaster1_ip" {
   value = "${aws_instance.kube-master1.public_ip}"
 }
 
-# output "kubemaster2_ip" {
-#   value = "${aws_instance.kube-master2.public_ip}"
-# }
+output "kubemaster2_ip" {
+  value = "${aws_instance.kube-master2.public_ip}"
+}
+
+output "kubenode0_ip" {
+  value = "${aws_instance.kube-node0.public_ip}"
+}
 
 output "kubenode1_ip" {
   value = "${aws_instance.kube-node1.public_ip}"

@@ -1,0 +1,23 @@
+# - name: load VAULT-encrypted values
+#   include_vars:
+#     file: files/VAULT_encrypted_variables
+
+# based on https://kubernetes.io/docs/setup/independent/high-availability/
+# https://github.com/kubernetes/kubeadm/issues/709
+# https://github.com/kubernetes/kubeadm/issues/546
+# https://docs.google.com/document/d/1rEMFuHo3rBJfFapKBInjCqm2d7xGkXzh0FpFO0cRuqg/edit?ts=5a4aa6ba#heading=h.nvrl2cjdo72m
+
+
+- name: configure etcd certs for primary-master
+  include_tasks: etcd-certs-primary-master.yml
+  when: (cluster_mode == 'primary-master')
+
+
+- name: configure etcd certs for secondary-master
+  include_tasks: etcd-certs-secondary-master.yml
+  when: (cluster_mode == 'secondary-master')
+
+
+- name: configure etcd
+  include_tasks: etcd-common.yml
+

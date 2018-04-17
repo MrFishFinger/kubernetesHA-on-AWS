@@ -2,7 +2,6 @@
   copy:
     src: kubeadm-config.yml
     dest: /opt/kubeadm-config.yml
-  when: (cluster_mode == 'create')
 
 
 - name: check if a kubernetes master
@@ -19,7 +18,7 @@
 
 - name: create kubernetes cluster
   shell: kubeadm init --config /opt/kubeadm-config.yml
-  when: (stat_master.stat.exists == False) and (stat_in_cluster.stat.exists == False) and (cluster_mode == 'create')
+  when: (stat_master.stat.exists == False) and (stat_in_cluster.stat.exists == False)
 
 
 - name: add KUBECONFIG environment variable to root user bashrc
@@ -29,27 +28,18 @@
     line: "export KUBECONFIG=/etc/kubernetes/admin.conf"
     state: present
     create: yes
-  when: (cluster_mode == 'create')
 
 
 - name: enable flannel CDR networking
   shell: export KUBECONFIG=/etc/kubernetes/admin.conf && kubectl apply -f https://raw.githubusercontent.com/coreos/flannel/v0.9.1/Documentation/kube-flannel.yml
-  when: (stat_master.stat.exists == False) and (stat_in_cluster.stat.exists == False) and (cluster_mode == 'create')
+  when: (stat_master.stat.exists == False) and (stat_in_cluster.stat.exists == False)
 
 
 # FIXME: this generates a new join token every run - need to find a way to run only on demand...
 - name: generate cluster join token
   command: "kubeadm token create --print-join-command"
   register: join_command
-  when: (cluster_mode == 'create')
 
 - name: store join_command in ansible fact so it can be used by nodes to join cluster
   set_fact:
     kube_cluster_join_command: "{{join_command.stdout}}"
-  when: (cluster_mode == 'create')
-
-
-- name: join new master to existing kubernetes cluster
-  command: "{{ hostvars[groups['tag_Name_kube_master1'][0]]['kube_cluster_join_command'] }}"
-  when: (stat_in_cluster.stat.exists == False) and (cluster_mode == 'join')
-

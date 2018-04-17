@@ -15,14 +15,15 @@
     - { role: kubernetes }
 
 
-- hosts: tag_Name_kube_master1
+- hosts: tag_Name_kube_master0
   roles:
-    - { role: kubernetes-master, cluster_mode: 'create' }
+    # - { role: kubernetes-master-HA, etcd_version: 'v3.1.10', cluster_mode: 'primary-master' }
+    - { role: kubernetes-master }
 
 
-# - hosts: tag_Name_kube_master2
+# - hosts: tag_Name_kube_master1 tag_Name_kube_master2
 #   roles:
-#     - { role: kubernetes-master, cluster_mode: 'join' }
+#     - { role: kubernetes-master-HA, etcd_version: 'v3.1.10', cluster_mode: 'secondary-master' }
 
 
 - hosts: tag_Name_kube_node*
@@ -30,7 +31,8 @@
     - { role: kubernetes-node }
 
 
-- hosts: tag_Name_kube_master1
+- hosts: tag_Name_kube_master0
   roles:
    - { role: kubernetes-app-test1-ebs }
    - { role: kubernetes-app-test2-efs }
+

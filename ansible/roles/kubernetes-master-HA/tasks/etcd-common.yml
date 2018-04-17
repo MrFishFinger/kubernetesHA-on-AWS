@@ -1,0 +1,46 @@
+- name: install etcd binary
+  unarchive:
+    src: "https://github.com/coreos/etcd/releases/download/{{ etcd_version }}/etcd-{{ etcd_version }}-linux-amd64.tar.gz"
+    dest: /usr/local/bin/
+    remote_src: yes
+    extra_opts: ["etcd-{{ etcd_version }}-linux-amd64/etcd", --strip-components=1]
+
+
+- name: install etcdctl binary
+  unarchive:
+    src: "https://github.com/coreos/etcd/releases/download/{{ etcd_version }}/etcd-{{ etcd_version }}-linux-amd64.tar.gz"
+    dest: /usr/local/bin/
+    remote_src: yes
+    extra_opts: ["etcd-{{ etcd_version }}-linux-amd64/etcdctl", --strip-components=1]
+
+
+- name: install systemd etcd environment file
+  template:
+    src: systemd_etcd.env
+    dest: /etc/etcd.env
+  notify:
+    - systemd_daemon_reload
+    - restart_etcd_service
+
+
+- name: install systemd service file for etcd
+  template:
+    src: systemd_etcd.service
+    dest: /etc/systemd/system/etcd.service
+  notify:
+    - systemd_daemon_reload
+    - restart_etcd_service
+
+
+- name: enable etcd service so it runs on startup
+  systemd:
+    name: etcd
+    enabled: yes
+    daemon_reload: yes
+
+
+- name: start etcd service using shell, as a 'systemd' ansible step will block as it waits for etcd to see 3 members
+  shell: systemctl restart etcd
+  async: 3600
+  poll: 0
+

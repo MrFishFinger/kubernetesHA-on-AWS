@@ -1,0 +1,35 @@
+[Unit]
+Description=etcd
+Documentation=https://github.com/coreos/etcd
+Conflicts=etcd.service
+Conflicts=etcd2.service
+
+
+[Service]
+EnvironmentFile=/etc/etcd.env
+Type=notify
+Restart=always
+RestartSec=5s
+LimitNOFILE=40000
+TimeoutStartSec=0
+
+ExecStart=/usr/local/bin/etcd --name ${PEER_NAME} \
+    --data-dir /var/lib/etcd \
+    --listen-client-urls https://${PRIVATE_IP}:2379 \
+    --advertise-client-urls https://${PRIVATE_IP}:2379 \
+    --listen-peer-urls https://${PRIVATE_IP}:2380 \
+    --initial-advertise-peer-urls https://${PRIVATE_IP}:2380 \
+    --cert-file=/etc/kubernetes/pki/etcd/server.pem \
+    --key-file=/etc/kubernetes/pki/etcd/server-key.pem \
+    --client-cert-auth \
+    --trusted-ca-file=/etc/kubernetes/pki/etcd/ca.pem \
+    --peer-cert-file=/etc/kubernetes/pki/etcd/peer.pem \
+    --peer-key-file=/etc/kubernetes/pki/etcd/peer-key.pem \
+    --peer-client-cert-auth \
+    --peer-trusted-ca-file=/etc/kubernetes/pki/etcd/ca.pem \
+    --initial-cluster {{hostvars[groups['tag_Name_kube_master0'][0]]['ec2_private_dns_name']}}=https://{{hostvars[groups['tag_Name_kube_master0'][0]]['ec2_private_ip_address']}}:2380,{{hostvars[groups['tag_Name_kube_master1'][0]]['ec2_private_dns_name']}}=https://{{hostvars[groups['tag_Name_kube_master1'][0]]['ec2_private_ip_address']}}:2380,{{hostvars[groups['tag_Name_kube_master2'][0]]['ec2_private_dns_name']}}=https://{{hostvars[groups['tag_Name_kube_master2'][0]]['ec2_private_ip_address']}}:2380 \
+    --initial-cluster-token my-etcd-token \
+    --initial-cluster-state new
+
+[Install]
+WantedBy=multi-user.target

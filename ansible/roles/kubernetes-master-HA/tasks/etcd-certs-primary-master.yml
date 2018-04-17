@@ -1,0 +1,78 @@
+- name: install cfssl binary
+  get_url:
+    url: https://pkg.cfssl.org/R1.2/cfssl_linux-amd64
+    dest: /usr/local/bin/cfssl
+    mode: 0755
+
+
+- name: install cfssljson binary
+  get_url:
+    url: https://pkg.cfssl.org/R1.2/cfssljson_linux-amd64
+    dest: /usr/local/bin/cfssljson
+    mode: 0755
+
+
+- name: create kubernetes pki dirs
+  file:
+    path: "{{ item }}"
+    state: directory
+  with_items:
+    - /etc/kubernetes/pki/
+    - /etc/kubernetes/pki/etcd
+
+
+- name: copy cert config files
+  copy:
+    src: "etcd-certs-primary-config/{{ item }}"
+    dest: "/etc/kubernetes/pki/etcd/{{ item }}"
+  with_items:
+    - ca-config.json
+    - ca-csr.json
+    - client.json
+
+
+- name: generate ca.pem
+  shell: cfssl gencert -initca ca-csr.json | cfssljson -bare ca -
+  args:
+    chdir: /etc/kubernetes/pki/etcd/
+    creates: /etc/kubernetes/pki/etcd/ca.pem
+
+
+- name: generate client.pem and client-key.pem
+  shell: cfssl gencert -ca=ca.pem -ca-key=ca-key.pem -config=ca-config.json -profile=client client.json | cfssljson -bare client
+  args:
+    chdir: /etc/kubernetes/pki/etcd/
+    creates: /etc/kubernetes/pki/etcd/client.pem
+
+
+- name: copy config.json template
+  template:
+    src: etcd_config.json
+    dest: /etc/kubernetes/pki/etcd/config.json
+
+
+- name: generate server certs
+  shell: cfssl gencert -ca=ca.pem -ca-key=ca-key.pem -config=ca-config.json -profile=server config.json | cfssljson -bare server
+  args:
+    chdir: /etc/kubernetes/pki/etcd/
+    creates: /etc/kubernetes/pki/etcd/server.pem
+
+
+- name: generate peer certs
+  shell: cfssl gencert -ca=ca.pem -ca-key=ca-key.pem -config=ca-config.json -profile=peer config.json | cfssljson -bare peer
+  args:
+    chdir: /etc/kubernetes/pki/etcd/
+    creates: /etc/kubernetes/pki/etcd/peer.pem
+
+
+- name: fetch generated certs files from primary, to store on local machine, to then use for provisioning secondary masters
+  fetch:
+    src: "/etc/kubernetes/pki/etcd/{{item}}"
+    dest: "{{role_path}}/files/certs-fetched-from-primary-master/"
+    flat: yes
+  with_items:
+    - ca.pem
+    - ca-key.pem
+    - client.pem
+    - client-key.pem
+    - ca-config.json
