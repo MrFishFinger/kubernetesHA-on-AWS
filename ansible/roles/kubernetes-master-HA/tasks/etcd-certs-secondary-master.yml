@@ -21,7 +21,7 @@
     - /etc/kubernetes/pki/etcd
 
 
-- name: copy cert files from primary-master
+- name: copy cert files that were generated on primary-master
   copy:
     src: "certs-fetched-from-primary-master/{{ item }}"
     dest: "/etc/kubernetes/pki/etcd/{{ item }}"

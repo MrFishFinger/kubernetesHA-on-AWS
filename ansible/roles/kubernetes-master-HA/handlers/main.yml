@@ -3,6 +3,7 @@
 
 
 - name: restart_etcd_service
-  service:
-    name: etcd
-    state: restarted
+# restart etcd service using shell, as a 'systemd' ansible step will block as it waits for etcd to see 3 members
+  shell: systemctl restart etcd
+  async: 3600
+  poll: 0
