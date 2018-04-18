@@ -10,6 +10,8 @@
 
 **2. populate AWS profile credentials here:** `~/.aws/credentials`
 
+(ensure associated account has adequate permissions in AWS)
+
 *example:*
 ```
 [superman]
