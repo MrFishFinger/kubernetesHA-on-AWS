@@ -22,7 +22,7 @@ aws_access_key_id = REDACTED
 
 **3. clone repo**
 
-`git clone git@bitbucket.org:influentialchicken/kubernetes-automation.git`
+`git clone git@github.com:MrFishFinger/kubernetesHA-on-AWS.git`
 
 
 **4. download terraform binary and init project**
