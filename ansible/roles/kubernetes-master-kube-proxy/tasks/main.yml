@@ -1,0 +1,29 @@
+- name: check if new kube-proxy config has been configured
+  stat:
+    path: /etc/kubernetes/new-kube-proxy-cm.yaml
+  register: stat_kube_prox_conf
+
+
+- name: dump kube-proxy config map (only run when cluster is first created)
+  shell: kubectl get configmap -n kube-system kube-proxy -o yaml > /etc/kubernetes/new-kube-proxy-cm.yaml
+  environment:
+    KUBECONFIG: /etc/kubernetes/admin.conf
+  when: (stat_kube_prox_conf.stat.exists == False)
+
+
+- name: update kube-proxy configmap to use LB address (only run when cluster is first created)
+  lineinfile:
+    dest: /etc/kubernetes/new-kube-proxy-cm.yaml
+    regexp: "^        server: https"
+    line:   "        server: https://{{ hostvars[groups['tag_Name_kube_master0'][0]]['aws_lp_ipaddress'] }}:6443"
+    state: present
+  when: (stat_kube_prox_conf.stat.exists == False)
+
+
+- name: apply new kube-proxy definition, then restart all kube-proxy pods across cluster (only run when cluster is first created)
+  shell: |
+    kubectl apply -f /etc/kubernetes/new-kube-proxy-cm.yaml --force
+    kubectl delete pod -n kube-system -l k8s-app=kube-proxy
+  environment:
+    KUBECONFIG: /etc/kubernetes/admin.conf
+  when: (stat_kube_prox_conf.stat.exists == False)

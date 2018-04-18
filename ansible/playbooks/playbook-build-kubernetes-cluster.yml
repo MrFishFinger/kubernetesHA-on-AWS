@@ -3,7 +3,7 @@
 
 
 
-# TERRAFORM
+# BUILD INFRASTRUCTURE ON AWS WITH TERRAFORM
 - hosts: local_machine
   roles:
     - { role: terraform-kubernetes1, project_path: '{{playbook_dir}}/../../terraform/', binary_path: '{{playbook_dir}}/../../terraform/terraform' }
@@ -20,14 +20,14 @@
     - { role: kubernetes }
 
 
-# LEGACY NON-HA KUBERNETES MASTER
+# # # [LEGACY] CREATE NON-HA KUBERNETES MASTER
 # # - hosts: tag_Name_kube_master0
 # #   roles:
 # #     - { role: kubernetes-master }
 
 
 
-# KUBERNETES ETCD
+# CREATE ETCD CLUSTER FOR KUBERNETES
 - hosts: tag_Name_kube_master0
   roles:
     - { role: kubernetes-master-HA-etcd, etcd_version: 'v3.1.12', cluster_mode: 'primary-master' }
@@ -38,7 +38,7 @@
 
 
 
-# KUBERNETES MASTERS
+# ADD MASTERS TO KUBERNETES CLUSTER
 - hosts: tag_Name_kube_master0
   roles:
     - { role: kubernetes-master-HA, cluster_mode: primary-master }
@@ -49,11 +49,16 @@
 
 
 
-# KUBERNETES NODES
+# # ADD NODES TO KUBERNETES CLUSTER
 - hosts: tag_Name_kube_node*
   roles:
     - { role: kubernetes-node }
 
+
+# RECONFIGURE KUBE-PROXY TO WORK WITH LB
+- hosts: tag_Name_kube_master0
+  roles:
+    - { role: kubernetes-master-kube-proxy }
 
 
 # KUBERNETES TEST APPLICATIONS

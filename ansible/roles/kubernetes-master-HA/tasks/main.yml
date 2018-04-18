@@ -1,3 +1,16 @@
+- name: write AWS LB IP to text file for future use (this is a hack to ensure we always use the same IP addr - because the DNS name returns multiple A records..)
+  shell: "getent hosts {{ hostvars['local_machine']['kubernetesAPI_internal_LB1_dnsname'] }} | awk '{ print $1 }' | head -n1 > /etc/kubernetes/aws_lp_ip.txt"
+  args:
+    creates: /etc/kubernetes/aws_lp_ip.txt
+
+- name: read AWS LB IP from text file
+  shell: "cat /etc/kubernetes/aws_lp_ip.txt"
+  register: aws_lp_ipaddress_raw
+
+- set_fact:
+    aws_lp_ipaddress: "{{aws_lp_ipaddress_raw.stdout}}"
+
+
 - name: copy kubeadm config file
   template:
     src: kubeadm-config.yml
@@ -55,7 +68,7 @@
     create: yes
 
 
-- name: enable flannel CDR networking
+- name: enable flannel CDR networking (only run when cluster is first created)
   shell: export KUBECONFIG=/etc/kubernetes/admin.conf && kubectl apply -f https://raw.githubusercontent.com/coreos/flannel/v0.9.1/Documentation/kube-flannel.yml
   when: (stat_master.stat.exists == False) and (stat_in_cluster.stat.exists == False)
 
@@ -69,3 +82,12 @@
   set_fact:
     kube_cluster_join_command: "{{join_command.stdout}}"
 
+
+# - name: configure kubelet config to use AWS LB (looks like this should only be configured on worker nodes...)
+#   lineinfile:
+#     dest: /etc/kubernetes/kubelet.conf
+#     regexp: "^    server: https"
+#     line: "    server: https://{{ aws_lp_ipaddress }}:6443"
+#     state: present
+#   notify:
+#     - restart kubelet

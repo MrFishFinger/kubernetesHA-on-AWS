@@ -14,8 +14,7 @@ cloudProvider: aws
 networking:
   podSubnet: 10.244.0.0/16
 apiServerCertSANs:
-- {{ lookup('dig', hostvars['local_machine']['kubernetesAPI_internal_LB1_dnsname'], wantlist=True) | first}}
-#- {{ hostvars['local_machine']['kubernetesAPI_internal_LB1_dnsname'] }} <<-- this DNS name does not work with kubeadm
+- {{ hostvars[groups['tag_Name_kube_master0'][0]]['aws_lp_ipaddress'] }}
 apiServerExtraArgs:
   endpoint-reconciler-type: lease
   # apiserver-count: "3"
