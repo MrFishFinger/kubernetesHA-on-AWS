@@ -1,0 +1,33 @@
+- name: check if test helm app already deployed
+  shell: helm list | grep test-helm-nginx
+  register: helm_package_deployed
+  changed_when: false
+  failed_when: false
+  environment:
+    KUBECONFIG: /etc/kubernetes/admin.conf
+
+
+- name: install test helm app - stable/nginx-ingress - using shell, as native helm ansible module is unusable
+  shell: helm install stable/nginx-ingress --name test-helm-nginx
+  when: '"test-helm-nginx" not in helm_package_deployed.stdout'
+  environment:
+    KUBECONFIG: /etc/kubernetes/admin.conf
+
+
+# native (experimental) helm module for ansible seems to be unusable at this present time
+
+# - name: install test helm app - stable/nginx-ingress
+#   helm:
+#     # host: tiller-deploy.kube-system.svc.cluster.local
+#     host: 10.111.190.5
+#     chart:
+#       name: nginx-ingress
+#       version: 0.13.2
+#       source:
+#         type: repo
+#         location: https://kubernetes-charts.storage.googleapis.com
+#     state: present
+#     name: nginx-test
+#     namespace: default
+#   environment:
+#     KUBECONFIG: /etc/kubernetes/admin.conf

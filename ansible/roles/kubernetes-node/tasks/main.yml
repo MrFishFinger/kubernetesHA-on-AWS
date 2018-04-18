@@ -19,6 +19,12 @@
 - name: join kubernetes cluster
   command: "{{ hostvars[groups['tag_Name_kube_master0'][0]]['kube_cluster_join_command'] }}"
   when: (stat_in_cluster.stat.exists == False)
+  notify:
+    - restart kubelet
+
+
+- name: force handlers to run, to ensure kubelet restarts and generates a config file
+  meta: flush_handlers
 
 
 - name: configure kubelet config to use AWS LB

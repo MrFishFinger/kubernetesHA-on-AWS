@@ -1,0 +1,45 @@
+- name: install helm binary
+  unarchive:
+    src: "https://storage.googleapis.com/kubernetes-helm/helm-{{helm_version}}-linux-amd64.tar.gz"
+    dest: /usr/local/bin/
+    remote_src: yes
+    extra_opts: ["linux-amd64/helm", --strip-components=1]
+
+
+- name: check if helm-tiller already installed in cluster
+  shell: kubectl get service --all-namespaces | grep tiller
+  register: helm_tiller_installed
+  changed_when: false
+  failed_when: false
+  environment:
+    KUBECONFIG: /etc/kubernetes/admin.conf
+
+
+- name: install helm-tiller in cluster
+  # see: https://github.com/kubernetes/helm/issues/3055#issuecomment-356347732
+  shell: |
+    helm init
+    kubectl create serviceaccount --namespace kube-system tiller
+    kubectl create clusterrolebinding tiller-cluster-rule --clusterrole=cluster-admin --serviceaccount=kube-system:tiller
+    kubectl patch deploy --namespace kube-system tiller-deploy -p '{"spec":{"template":{"spec":{"serviceAccount":"tiller"}}}}'
+  environment:
+    KUBECONFIG: /etc/kubernetes/admin.conf
+  when: '"tiller" not in helm_tiller_installed.stdout'
+
+
+- name: install prerequsite packages for pyhelm
+  package:
+    name: "{{item}}"
+    state: present
+  with_items:
+    - libffi-dev
+    - libgit2-dev
+
+
+- name: install pip packages for pyhelm
+  pip:
+    name: "{{item}}"
+    state: present
+  with_items:
+    - pygit2==0.24.2
+    - pyhelm

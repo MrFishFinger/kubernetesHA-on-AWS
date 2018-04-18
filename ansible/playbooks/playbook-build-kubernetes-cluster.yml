@@ -60,6 +60,7 @@
 - hosts: tag_Name_kube_master0
   roles:
     - { role: kubernetes-master-kube-proxy }
+    - { role: kubernetes-helm, helm_version: 'v2.8.2' }
 
 
 
@@ -68,3 +69,4 @@
   roles:
    - { role: kubernetes-app-test1-ebs }
    - { role: kubernetes-app-test2-efs }
+   - { role: kubernetes-app-test3-helm }
