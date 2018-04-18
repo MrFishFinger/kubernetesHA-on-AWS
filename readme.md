@@ -47,9 +47,10 @@ chmod 0400 kubernetes_test_key*
 
 **6. if necessary, update terraform/ec2 variables (such as region, subnet, AZ)**
 
-`kubernetes-automation/terraform/variables.tf`
-`kubernetes-automation/ansible/hosts/ec2.ini`
-
+```
+kubernetes-automation/terraform/variables.tf
+kubernetes-automation/ansible/hosts/ec2.ini
+```
 
 **7. build infrastructure:**
 
