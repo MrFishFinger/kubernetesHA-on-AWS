@@ -19,7 +19,7 @@ variable "aws_authprofile" {
 }
 
 variable "aws_ami_debian94" {
-  default = "ami-ada0f946"
+  default = "ami-b693ca5d"
 }
 
 variable "ssh_keypair_name" {
