@@ -16,6 +16,11 @@
     - restart kubelet
 
 
+- name: join kubernetes cluster
+  command: "{{ hostvars[groups['tag_Name_kube_master0'][0]]['kube_cluster_join_command'] }}"
+  when: (stat_in_cluster.stat.exists == False)
+
+
 - name: configure kubelet config to use AWS LB
   lineinfile:
     dest: /etc/kubernetes/kubelet.conf
@@ -24,8 +29,3 @@
     state: present
   notify:
     - restart kubelet
-
-
-- name: join kubernetes cluster
-  command: "{{ hostvars[groups['tag_Name_kube_master0'][0]]['kube_cluster_join_command'] }}"
-  when: (stat_in_cluster.stat.exists == False)
