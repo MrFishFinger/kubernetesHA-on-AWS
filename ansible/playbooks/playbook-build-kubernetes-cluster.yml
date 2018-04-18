@@ -10,7 +10,7 @@
 
 
 
-# GENERAL COMMON OS
+# GENERAL OS SETUP FOR ALL INSTANCES
 - hosts: tag_Name_kube*
   roles:
     - { role: aws-FQDN-hostname }
@@ -49,19 +49,21 @@
 
 
 
-# # ADD NODES TO KUBERNETES CLUSTER
+# ADD WORKER NODES TO KUBERNETES CLUSTER
 - hosts: tag_Name_kube_node*
   roles:
     - { role: kubernetes-node }
 
 
-# RECONFIGURE KUBE-PROXY TO WORK WITH LB
+
+# RECONFIGURE KUBE-PROXY TO WORK WITH AWS LB AND INSTALL HELM
 - hosts: tag_Name_kube_master0
   roles:
     - { role: kubernetes-master-kube-proxy }
 
 
-# KUBERNETES TEST APPLICATIONS
+
+# RUN KUBERNETES TEST APPLICATIONS ON CLUSTER
 - hosts: tag_Name_kube_master0
   roles:
    - { role: kubernetes-app-test1-ebs }

@@ -21,7 +21,7 @@
     - python-pip
 
 
-- name: install python openshift (required by ansible k8s_raw plugin)
+- name: install python openshift (required by ansible k8s_raw module)
   pip:
     name: openshift
 
