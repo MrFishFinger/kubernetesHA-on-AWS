@@ -4,6 +4,37 @@ provider "aws" {
 }
 
 
+resource "aws_iam_role" "kubernetes_full_ec2_role" {
+    name = "kubernetes_full_ec2_role"
+    assume_role_policy = <<EOF
+{
+  "Version": "2012-10-17",
+  "Statement": [
+    {
+      "Action": "sts:AssumeRole",
+      "Principal": {
+        "Service": "ec2.amazonaws.com"
+      },
+      "Effect": "Allow",
+      "Sid": ""
+    }
+  ]
+}
+EOF
+}
+
+resource "aws_iam_instance_profile" "kubernetes_full_ec2_role" {
+  name  = "kubernetes_full_ec2_role"
+  role = "${aws_iam_role.kubernetes_full_ec2_role.id}"
+}
+
+
+resource "aws_iam_role_policy_attachment" "kubernetes_full_ec2_role_attach" {
+    role       = "${aws_iam_role.kubernetes_full_ec2_role.id}"
+    policy_arn = "arn:aws:iam::aws:policy/AmazonEC2FullAccess"
+}
+
+
 resource "aws_key_pair" "kubernetes_keypair1" {
   key_name   = "${var.ssh_keypair_name}"
   public_key = "${file(var.ssh_public_key_path)}"
@@ -61,7 +92,8 @@ resource "aws_instance" "kube-master0" {
   subnet_id              = "${aws_subnet.kubernetes_subnet.id}"
   key_name               = "${aws_key_pair.kubernetes_keypair1.id}"
   vpc_security_group_ids = ["${aws_security_group.kubernetes_security_group.id}"]
-  iam_instance_profile   = "${var.aws_iam_role_for_kubernetes}"
+  iam_instance_profile   = "${aws_iam_role.kubernetes_full_ec2_role.id}"
+
 
   connection {
     type        = "ssh"
@@ -83,7 +115,7 @@ resource "aws_instance" "kube-master1" {
   subnet_id              = "${aws_subnet.kubernetes_subnet.id}"
   key_name               = "${aws_key_pair.kubernetes_keypair1.id}"
   vpc_security_group_ids = ["${aws_security_group.kubernetes_security_group.id}"]
-  iam_instance_profile   = "${var.aws_iam_role_for_kubernetes}"
+  iam_instance_profile   = "${aws_iam_role.kubernetes_full_ec2_role.id}"
 
   connection {
     type        = "ssh"
@@ -105,7 +137,7 @@ resource "aws_instance" "kube-master2" {
   subnet_id              = "${aws_subnet.kubernetes_subnet.id}"
   key_name               = "${aws_key_pair.kubernetes_keypair1.id}"
   vpc_security_group_ids = ["${aws_security_group.kubernetes_security_group.id}"]
-  iam_instance_profile   = "${var.aws_iam_role_for_kubernetes}"
+  iam_instance_profile   = "${aws_iam_role.kubernetes_full_ec2_role.id}"
 
   connection {
     type         = "ssh"
@@ -127,7 +159,7 @@ resource "aws_instance" "kube-node0" {
   subnet_id              = "${aws_subnet.kubernetes_subnet.id}"
   key_name               = "${aws_key_pair.kubernetes_keypair1.id}"
   vpc_security_group_ids = ["${aws_security_group.kubernetes_security_group.id}"]
-  iam_instance_profile   = "${var.aws_iam_role_for_kubernetes}"
+  iam_instance_profile   = "${aws_iam_role.kubernetes_full_ec2_role.id}"
 
   connection {
     type        = "ssh"
@@ -149,7 +181,7 @@ resource "aws_instance" "kube-node1" {
   subnet_id              = "${aws_subnet.kubernetes_subnet.id}"
   key_name               = "${aws_key_pair.kubernetes_keypair1.id}"
   vpc_security_group_ids = ["${aws_security_group.kubernetes_security_group.id}"]
-  iam_instance_profile   = "${var.aws_iam_role_for_kubernetes}"
+  iam_instance_profile   = "${aws_iam_role.kubernetes_full_ec2_role.id}"
 
   connection {
     type        = "ssh"
@@ -171,7 +203,7 @@ resource "aws_instance" "kube-node2" {
   subnet_id              = "${aws_subnet.kubernetes_subnet.id}"
   key_name               = "${aws_key_pair.kubernetes_keypair1.id}"
   vpc_security_group_ids = ["${aws_security_group.kubernetes_security_group.id}"]
-  iam_instance_profile   = "${var.aws_iam_role_for_kubernetes}"
+  iam_instance_profile   = "${aws_iam_role.kubernetes_full_ec2_role.id}"
 
   connection {
     type        = "ssh"

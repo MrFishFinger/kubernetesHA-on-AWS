@@ -1,7 +1,6 @@
 # QUICKSTART
 
-**0. ensure there is an IAM role configured in AWS**
-  create IAM role named `aaa_kubernetes_role` that has adequate ec2 permissions (eg `AmazonEC2FullAccess`)
+**0. install latest version of ansible**
 
 
 **1. install boto and configure aws credentials**
