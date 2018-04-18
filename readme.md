@@ -28,7 +28,7 @@ aws_access_key_id = REDACTED
 **4. download terraform binary and init project**
 
 ```
-cd kubernetes-automation/terraform/
+cd kubernetesHA-on-AWS/terraform/
 wget https://releases.hashicorp.com/terraform/0.11.7/terraform_0.11.7_linux_amd64.zip
 unzip terraform_0.11.7_linux_amd64.zip
 chmod +x terraform
@@ -39,7 +39,7 @@ chmod +x terraform
 
 **5. create ssh-key**
 ```
-cd kubernetes-automation/ssh-keypairs
+cd kubernetesHA-on-AWS/ssh-keypairs
 ssh-keygen -f kubernetes_test_key -N ''
 chmod 0400 kubernetes_test_key*
 ```
@@ -48,13 +48,13 @@ chmod 0400 kubernetes_test_key*
 **6. if necessary, update terraform/ec2 variables (such as region, subnet, AZ)**
 
 ```
-kubernetes-automation/terraform/variables.tf
-kubernetes-automation/ansible/hosts/ec2.ini
+kubernetesHA-on-AWS/terraform/variables.tf
+kubernetesHA-on-AWS/ansible/hosts/ec2.ini
 ```
 
 **7. build infrastructure:**
 
 ```
-cd kubernetes-automation/ansible
+cd kubernetesHA-on-AWS/ansible
 AWS_PROFILE=superman ansible-playbook playbooks/playbook-build-kubernetes-cluster.yml
 ```
