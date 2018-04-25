@@ -3,7 +3,7 @@
 **0. install latest version of ansible**
 
 
-**1. install boto and configure aws credentials**
+**1. install boto**
 
 `sudo apt install python-pip && sudo pip install -U boto`
 
