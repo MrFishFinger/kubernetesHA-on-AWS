@@ -61,6 +61,13 @@ resource "aws_security_group" "kubernetes_security_group" {
     protocol    = "tcp"
     cidr_blocks = ["0.0.0.0/0"]
     description = "worldwide inbound SSH access"
+  }
+
+  ingress {
+    from_port   = -1
+    to_port     = -1
+    protocol    = "icmp"
+    cidr_blocks = ["0.0.0.0/0"]
     description = "worldwide inbound ICMP access"
   }
 
@@ -73,10 +80,11 @@ resource "aws_security_group" "kubernetes_security_group" {
   }
 
   ingress {
-    from_port   = -1
-    to_port     = -1
-    protocol    = "icmp"
-    cidr_blocks = ["0.0.0.0/0"]
+    from_port   = 6443
+    to_port     = 6443
+    protocol    = "tcp"
+    cidr_blocks = ["${var.aws_subnet_CIDR}"]
+    description = "kubernetes API access"
   }
 
   egress {
@@ -221,79 +229,77 @@ resource "aws_instance" "kube-node2" {
   }
 }
 
-########### Modern NLB problematic with port 6443/tcp. Currently using Classic LB instead ###########
-# resource "aws_lb" "kubernetesAPI-internal-lb1" {
-#   name               = "kubernetesAPI-internal-lb1"
-#   load_balancer_type = "network"
-#   internal           = true
-#   subnets            = ["${aws_subnet.kubernetes_subnet.id}"]
-# }
-#
-# resource "aws_lb_target_group" "kubernetesAPI-internal-lb1" {
-#   name        = "kubernetesAPI-internal-lb1"
-#   port        = 6443
-#   protocol    = "TCP"
-#   target_type = "instance"
-#   vpc_id      = "${var.aws_VPC_ID}"
-#   stickiness  = []
-# }
-#
-# resource "aws_lb_listener" "kubernetesAPI-internal-lb1" {
-#   load_balancer_arn = "${aws_lb.kubernetesAPI-internal-lb1.arn}"
-#   port              = 6443
-#   protocol          = "TCP"
-#
-#   default_action {
-#     target_group_arn = "${aws_lb_target_group.kubernetesAPI-internal-lb1.arn}"
-#     type             = "forward"
-#   }
-# }
-#
-# resource "aws_lb_target_group_attachment" "kubernetesAPI-internal-lb1_kube-master0" {
-#   target_group_arn = "${aws_lb_target_group.kubernetesAPI-internal-lb1.arn}"
-#   target_id        = "${aws_instance.kube-master0.id}"
-#   port             = 6443
-# }
-#
-# resource "aws_lb_target_group_attachment" "kubernetesAPI-internal-lb1_kube-master1" {
-#   target_group_arn = "${aws_lb_target_group.kubernetesAPI-internal-lb1.arn}"
-#   target_id        = "${aws_instance.kube-master1.id}"
-#   port             = 6443
-# }
-#
-# resource "aws_lb_target_group_attachment" "kubernetesAPI-internal-lb1_kube-master2" {
-#   target_group_arn = "${aws_lb_target_group.kubernetesAPI-internal-lb1.arn}"
-#   target_id        = "${aws_instance.kube-master2.id}"
-#   port             = 6443
-# }
-########### Modern NLB problematic with port 6443/tcp. Currently using Classic LB instead ###########
 
+resource "aws_lb" "kubernetes-api-internal-nlb1" {
+  name               = "kubernetes-api-internal-nlb1"
+  load_balancer_type = "network"
+  internal           = true
+  subnets            = ["${aws_subnet.kubernetes_subnet.id}"]
+}
 
-resource "aws_elb" "kubernetesAPI-internal-lb1" {
-  name                        = "kubernetesAPI-internal-lb1"
-  internal                    = true
-  subnets                     = ["${aws_subnet.kubernetes_subnet.id}"]
-  security_groups             = ["${aws_security_group.kubernetes_security_group.id}"]
-  instances                   = ["${aws_instance.kube-master0.id}", "${aws_instance.kube-master1.id}", "${aws_instance.kube-master2.id}"]
-  cross_zone_load_balancing   = false
-  idle_timeout                = 400
+resource "aws_lb_target_group" "kubernetes-api-internal-nlb1" {
+  name        = "kubernetes-api-internal-nlb1"
+  port        = 6443
+  protocol    = "TCP"
+  target_type = "instance"
+  vpc_id      = "${var.aws_VPC_ID}"
+  stickiness  = []
+}
 
-  listener {
-    instance_port     = 6443
-    instance_protocol = "tcp"
-    lb_port           = 6443
-    lb_protocol       = "tcp"
-  }
+resource "aws_lb_listener" "kubernetes-api-internal-nlb1" {
+  load_balancer_arn = "${aws_lb.kubernetes-api-internal-nlb1.arn}"
+  port              = 6443
+  protocol          = "TCP"
 
-  health_check {
-    healthy_threshold   = 2
-    unhealthy_threshold = 2
-    timeout             = 2
-    target              = "TCP:6443"
-    interval            = 10
+  default_action {
+    target_group_arn = "${aws_lb_target_group.kubernetes-api-internal-nlb1.arn}"
+    type             = "forward"
   }
 }
 
+resource "aws_lb_target_group_attachment" "kubernetes-api-internal-nlb1_kube-master0" {
+  target_group_arn = "${aws_lb_target_group.kubernetes-api-internal-nlb1.arn}"
+  target_id        = "${aws_instance.kube-master0.id}"
+  port             = 6443
+}
+
+resource "aws_lb_target_group_attachment" "kubernetes-api-internal-nlb1_kube-master1" {
+  target_group_arn = "${aws_lb_target_group.kubernetes-api-internal-nlb1.arn}"
+  target_id        = "${aws_instance.kube-master1.id}"
+  port             = 6443
+}
+
+resource "aws_lb_target_group_attachment" "kubernetes-api-internal-nlb1_kube-master2" {
+  target_group_arn = "${aws_lb_target_group.kubernetes-api-internal-nlb1.arn}"
+  target_id        = "${aws_instance.kube-master2.id}"
+  port             = 6443
+}
+
+
+# resource "aws_elb" "kubernetesAPI-internal-lb1" {
+#   name                        = "kubernetesAPI-internal-lb1"
+#   internal                    = true
+#   subnets                     = ["${aws_subnet.kubernetes_subnet.id}"]
+#   security_groups             = ["${aws_security_group.kubernetes_security_group.id}"]
+#   instances                   = ["${aws_instance.kube-master0.id}", "${aws_instance.kube-master1.id}", "${aws_instance.kube-master2.id}"]
+#   cross_zone_load_balancing   = false
+#   idle_timeout                = 400
+
+#   listener {
+#     instance_port     = 6443
+#     instance_protocol = "tcp"
+#     lb_port           = 6443
+#     lb_protocol       = "tcp"
+#   }
+
+#   health_check {
+#     healthy_threshold   = 2
+#     unhealthy_threshold = 2
+#     timeout             = 2
+#     target              = "TCP:6443"
+#     interval            = 10
+#   }
+# }
 
 
 
