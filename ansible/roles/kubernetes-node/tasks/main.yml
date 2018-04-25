@@ -31,7 +31,7 @@
   lineinfile:
     dest: /etc/kubernetes/kubelet.conf
     regexp: "^    server: https"
-    line: "    server: https://{{ hostvars[groups['tag_Name_kube_master0'][0]]['aws_lp_ipaddress'] }}:6443"
+    line: "    server: https://{{ hostvars['local_machine']['kubernetes_api_internal_nlb1_dnsname'] }}:6443"
     state: present
   notify:
     - restart kubelet

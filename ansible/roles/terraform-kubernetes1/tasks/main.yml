@@ -52,6 +52,6 @@
      test2_efs_fs_dnsname: "{{terraform_output.outputs.test2_efs_fs_dnsname.value}}"
 
 
-- name: set fact for DNSname of kubernetesAPI_internal_LB1 ({{terraform_output.outputs.kubernetesAPI_internal_LB1_dnsname.value}})
+- name: set fact for DNSname of kubernetes-api-internal-nlb1 ({{terraform_output.outputs.kubernetes_api_internal_nlb1_dnsname.value}})
   set_fact:
-     kubernetesAPI_internal_LB1_dnsname: "{{terraform_output.outputs.kubernetesAPI_internal_LB1_dnsname.value}}"
+     kubernetes_api_internal_nlb1_dnsname: "{{terraform_output.outputs.kubernetes_api_internal_nlb1_dnsname.value}}"

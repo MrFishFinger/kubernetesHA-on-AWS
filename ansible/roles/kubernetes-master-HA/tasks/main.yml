@@ -1,16 +1,3 @@
-- name: write AWS LB IP to text file for future use (this is a hack to ensure we always use the same IP addr - because the DNS name returns multiple A records..)
-  shell: "getent hosts {{ hostvars['local_machine']['kubernetesAPI_internal_LB1_dnsname'] }} | awk '{ print $1 }' | head -n1 > /etc/kubernetes/aws_lp_ip.txt"
-  args:
-    creates: /etc/kubernetes/aws_lp_ip.txt
-
-- name: read AWS LB IP from text file
-  shell: "cat /etc/kubernetes/aws_lp_ip.txt"
-  register: aws_lp_ipaddress_raw
-
-- set_fact:
-    aws_lp_ipaddress: "{{aws_lp_ipaddress_raw.stdout}}"
-
-
 - name: copy kubeadm config file
   template:
     src: kubeadm-config.yml

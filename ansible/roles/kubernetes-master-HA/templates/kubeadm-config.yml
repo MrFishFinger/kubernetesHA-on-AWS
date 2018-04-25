@@ -1,7 +1,7 @@
 apiVersion: kubeadm.k8s.io/v1alpha1
 kind: MasterConfiguration
 api:
-  advertiseAddress: {{hostvars[groups['tag_Name_kube_master0'][0]]['ec2_private_ip_address']}}
+  advertiseAddress: {{ ansible_default_ipv4.address }}
 etcd:
   endpoints:
   - https://{{hostvars[groups['tag_Name_kube_master0'][0]]['ec2_private_ip_address']}}:2379
@@ -14,7 +14,7 @@ cloudProvider: aws
 networking:
   podSubnet: 10.244.0.0/16
 apiServerCertSANs:
-- {{ hostvars[groups['tag_Name_kube_master0'][0]]['aws_lp_ipaddress'] }}
+- {{ hostvars['local_machine']['kubernetes_api_internal_nlb1_dnsname'] }}
 apiServerExtraArgs:
   endpoint-reconciler-type: lease
   # apiserver-count: "3"
