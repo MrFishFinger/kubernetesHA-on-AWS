@@ -60,6 +60,8 @@ resource "aws_security_group" "kubernetes_security_group" {
     to_port     = 22
     protocol    = "tcp"
     cidr_blocks = ["0.0.0.0/0"]
+    description = "worldwide inbound SSH access"
+    description = "worldwide inbound ICMP access"
   }
 
   ingress {
@@ -67,6 +69,7 @@ resource "aws_security_group" "kubernetes_security_group" {
     to_port     = 0
     protocol    = "-1"
     self        = true
+    description = "inter-SG access"
   }
 
   ingress {
@@ -81,6 +84,7 @@ resource "aws_security_group" "kubernetes_security_group" {
     to_port     = 0
     protocol    = "-1"
     cidr_blocks = ["0.0.0.0/0"]
+    description = "worldwide outbound access"
   }
 }
 
