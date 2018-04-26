@@ -1,0 +1,48 @@
+- name: =============== WARNING ===============
+  pause:
+    prompt: Preparing to destroy provisioned apps on kubernetes cluster. Press enter to continue, or CTRL + C, then "a" to abort
+
+
+- name: destroy test helm app
+  shell: helm delete test-helm-nginx --purge
+  ignore_errors: yes
+  environment:
+    KUBECONFIG: /etc/kubernetes/admin.conf
+
+
+
+
+- name: delete all deployments
+  shell: kubectl delete deployments --all
+  environment:
+    KUBECONFIG: /etc/kubernetes/admin.conf
+
+
+- name: delete all services
+  shell: kubectl delete services --all
+  environment:
+    KUBECONFIG: /etc/kubernetes/admin.conf
+
+
+- name: delete all replication controllers
+  shell: kubectl delete rc --all
+  environment:
+    KUBECONFIG: /etc/kubernetes/admin.conf
+
+
+- name: delete all pods
+  shell: kubectl delete pods --all
+  environment:
+    KUBECONFIG: /etc/kubernetes/admin.conf
+
+
+- name: delete all PVCs
+  shell: kubectl delete pvc --all
+  environment:
+    KUBECONFIG: /etc/kubernetes/admin.conf
+
+
+- name: delete all PVs
+  shell: kubectl delete pv --all
+  environment:
+    KUBECONFIG: /etc/kubernetes/admin.conf

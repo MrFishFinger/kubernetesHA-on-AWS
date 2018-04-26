@@ -58,3 +58,13 @@ kubernetesHA-on-AWS/ansible/hosts/ec2.ini
 cd kubernetesHA-on-AWS/ansible
 AWS_PROFILE=superman ansible-playbook playbooks/playbook-build-kubernetes-cluster.yml
 ```
+This will take approximately 15-20minutes to build.
+Reasons this can take a while: slow upstream package sources (such as cfssl), AWS EFS and NLB slow to provision.
+
+
+
+**DESTROY / TEARDOWN INFRASTRUCTURE
+```
+cd kubernetesHA-on-AWS/ansible
+AWS_PROFILE=superman ansible-playbook playbooks/playbook-destroy-kubernetes-cluster.yml
+```

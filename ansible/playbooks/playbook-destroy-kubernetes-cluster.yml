@@ -1,0 +1,15 @@
+# usage:
+# AWS_PROFILE=superman ansible-playbook playbooks/playbook-destroy-kubernetes-cluster.yml
+
+
+# DESTROY KUBERNETES TEST APPLICATIONS ON CLUSTER
+- hosts: tag_Name_kube_master0
+  roles:
+   - { role: z-destroy-kubernetes-apps }
+
+
+
+# DESTROY INFRASTRUCTURE ON AWS WITH TERRAFORM
+- hosts: local_machine
+  roles:
+    - { role: z-destroy-terraform-kubernetes1, project_path: '{{playbook_dir}}/../../terraform/', binary_path: '{{playbook_dir}}/../../terraform/terraform' }
