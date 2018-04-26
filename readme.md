@@ -63,7 +63,7 @@ Reasons this can take a while: slow upstream package sources (such as cfssl), AW
 
 
 
-**DESTROY / TEARDOWN INFRASTRUCTURE
+**DESTROY / TEARDOWN INFRASTRUCTURE**
 ```
 cd kubernetesHA-on-AWS/ansible
 AWS_PROFILE=superman ansible-playbook playbooks/playbook-destroy-kubernetes-cluster.yml
