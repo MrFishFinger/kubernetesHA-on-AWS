@@ -70,3 +70,4 @@
    - { role: kubernetes-app-test1-ebs }
    - { role: kubernetes-app-test2-efs }
    - { role: kubernetes-app-test3-helm }
+   - { role: kubernetes-app-test4-deployment-with-aws-lb }

@@ -1,0 +1,23 @@
+kind: Deployment
+apiVersion: apps/v1
+metadata:
+  name: test4-deployment
+  namespace: default
+  labels:
+    app: test4-app
+spec:
+  replicas: 5
+  selector:
+    matchLabels:
+      app: test4-app
+  template:
+    metadata:
+      labels:
+        app: test4-app
+    spec:
+      containers:
+      - name: test4-nginx
+        image: nginx:stable-alpine
+        ports:
+        - containerPort: 80
+

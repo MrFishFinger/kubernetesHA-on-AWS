@@ -1,0 +1,56 @@
+- name: create test4 Service with AWS load balancer
+  k8s_raw:
+    state: present
+    kubeconfig: /etc/kubernetes/admin.conf
+    definition:
+      kind: Service
+      apiVersion: v1
+      metadata:
+        name: test4-service
+        namespace: default
+      spec:
+        ports:
+        - protocol: TCP
+          port: 80
+          targetPort: 80
+        selector:
+          app: test4-app
+        type: LoadBalancer
+
+
+- name: create kubernetes-manifests directory
+  file:
+    path: /opt/kubernetes-manifests
+    state: directory
+
+
+- name: copy test4-deployment.yml file to master
+  copy:
+    src: test4-deployment.yml
+    dest: /opt/kubernetes-manifests/test4-deployment.yml
+  notify:
+    - recreate_test4-deployment
+
+
+- name: check if test4-deployment already running
+  shell: kubectl get deployments | grep test4-deployment
+  register: test4_running
+  changed_when: false
+  failed_when: false
+  environment:
+    KUBECONFIG: /etc/kubernetes/admin.conf
+
+
+- name: create test4-deployment using shell (k8s_raw/openshift-restclient-python does not properly support deployments)
+# (similar issue to https://github.com/ansible/ansible/issues/38296)
+  shell: kubectl create -f /opt/kubernetes-manifests/test4-deployment.yml
+  when: '"test4-deployment" not in test4_running.stdout'
+  environment:
+    KUBECONFIG: /etc/kubernetes/admin.conf
+
+
+# - name: create test4 Deployment using k8s_raw
+#   k8s_raw:
+#     state: present
+#     kubeconfig: /etc/kubernetes/admin.conf
+#     src: /opt/kubernetes-manifests/test4-deployment.yml

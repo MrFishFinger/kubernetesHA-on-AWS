@@ -1,0 +1,6 @@
+- name: recreate_test4-deployment
+  shell: |
+    kubectl delete deployment test4-deployment
+    kubectl create -f /opt/kubernetes-manifests/test4-deployment.yml
+  environment:
+    KUBECONFIG: /etc/kubernetes/admin.conf
