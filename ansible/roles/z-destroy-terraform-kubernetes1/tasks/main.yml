@@ -1,8 +1,3 @@
-- name: =============== WARNING ===============
-  pause:
-    prompt: Preparing to destroy terraform infrastructure. Press enter to continue, or CTRL + C, then "a" to abort
-
-
 - name: destroy terraform infrastructure on AWS
   terraform:
     binary_path: '{{binary_path}}'

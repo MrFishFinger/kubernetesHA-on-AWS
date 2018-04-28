@@ -1,10 +1,5 @@
-- name: =============== WARNING ===============
-  pause:
-    prompt: Preparing to destroy provisioned apps on kubernetes cluster. Press enter to continue, or CTRL + C, then "a" to abort
-
-
 - name: destroy test helm app
-  shell: helm delete test-helm-nginx --purge
+  shell: helm delete --purge test-helm-nginx
   ignore_errors: yes
   environment:
     KUBECONFIG: /etc/kubernetes/admin.conf
@@ -22,6 +17,11 @@
   shell: kubectl delete services --all
   environment:
     KUBECONFIG: /etc/kubernetes/admin.conf
+
+
+- name: sleep 12 mins to workaround issue in kubernetes not deleting load balancer -> https://github.com/kubernetes/kubernetes/issues/17626
+  pause:
+    minutes: 12
 
 
 - name: delete all replication controllers
